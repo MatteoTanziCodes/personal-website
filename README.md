@@ -17,19 +17,18 @@ Live Site: [matteotanzi.dev](https://yourdomain.com) ← *(update once deployed)
 
 ## 📁 Project Structure
 
-\`\`\`
-my-portfolio/
-├── public/              # Static assets (resume.pdf, images, etc.)
-├── src/
-│   ├── components/      # Reusable UI components (Navbar, Cards, etc.)
-│   ├── pages/           # Site pages (index, resume, projects, etc.)
-│   ├── styles/          # Tailwind and global CSS
-│   └── lib/             # Utility functions (e.g. animations)
-├── tailwind.config.ts   # Tailwind CSS config
-├── next.config.js       # Next.js configuration
-├── tsconfig.json        # TypeScript config
-└── README.md
-\`\`\`
+    my-portfolio/
+    ├── public/              # Static assets (resume.pdf, images, etc.)
+    ├── src/
+    │   ├── components/      # Reusable UI components (Navbar, Cards, etc.)
+    │   ├── pages/           # Site pages (index, resume, projects, etc.)
+    │   ├── styles/          # Tailwind and global CSS
+    │   └── lib/             # Utility functions (e.g. animations)
+    ├── tailwind.config.ts   # Tailwind CSS config
+    ├── next.config.js       # Next.js configuration
+    ├── tsconfig.json        # TypeScript config
+    └── README.md
+
 
 ---
 
