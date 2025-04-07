@@ -17,18 +17,45 @@ Live Site: [matteotanzi.dev](https://yourdomain.com) ← *(update once deployed)
 
 ## 📁 Project Structure
 
-    my-portfolio/
-    ├── public/              # Static assets (resume.pdf, images, etc.)
-    ├── src/
-    │   ├── components/      # Reusable UI components (Navbar, Cards, etc.)
-    │   ├── pages/           # Site pages (index, resume, projects, etc.)
-    │   ├── styles/          # Tailwind and global CSS
-    │   └── lib/             # Utility functions (e.g. animations)
-    ├── tailwind.config.ts   # Tailwind CSS config
-    ├── next.config.js       # Next.js configuration
-    ├── tsconfig.json        # TypeScript config
-    └── README.md
-
+my-portfolio/
+├── public/
+│   ├── Matteo_Tanzi_Resume_2025.pdf
+│   └── assets/                     # Images, icons, screenshots
+│
+├── src/
+│   ├── app/                        # App Router entry point
+│   │   ├── layout.tsx              # Global layout (with Navbar/Footer)
+│   │   ├── page.tsx                # Landing (home) page
+│   │   ├── globals.css             # Tailwind base styles
+│   │   ├── resume/
+│   │   │   └── page.tsx
+│   │   ├── projects/
+│   │   │   └── page.tsx
+│   │   ├── research/
+│   │   │   └── page.tsx
+│   │   ├── contact/
+│   │   │   └── page.tsx
+│
+│   ├── components/                 # Reusable UI components
+│   │   ├── Navbar.tsx
+│   │   ├── Footer.tsx
+│   │   ├── SectionHeader.tsx
+│   │   ├── ResumeCard.tsx
+│   │   ├── ProjectCard.tsx
+│   │   └── AnimatedWrapper.tsx
+│
+│   ├── lib/                        # Utilities, animation variants, etc.
+│   │   └── framer.ts
+│
+│   ├── styles/                     # Optional for custom styles
+│       └── (custom CSS if needed)
+│
+├── tailwind.config.js             # Tailwind configuration
+├── postcss.config.js              # PostCSS plugins
+├── next.config.ts                 # Next.js config with import aliases
+├── tsconfig.json                  # TypeScript config (with paths)
+├── package.json
+└── README.md
 
 ---
 
