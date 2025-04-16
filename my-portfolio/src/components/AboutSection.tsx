@@ -6,7 +6,8 @@ import { motion } from "framer-motion";
 const sections = [
   { id: "about-me", label: "About" },
   { id: "contact", label: "Contact" },
-  { id: "now", label: "Now" },
+  { id: "work", label: "Work" },
+  { id: "current", label: "Current" },
   { id: "tools", label: "Tools" },
   { id: "interviews", label: "Interviews/Speaking" },
 ];
