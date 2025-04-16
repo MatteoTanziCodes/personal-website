@@ -24,7 +24,7 @@ export default function Navbar() {
     >
       <div
         className="w-full max-w-3xl mx-auto flex justify-end items-center font-medium pr-6 transition-[gap] duration-300"
-        style={{ gap: "clamp(1rem, 4vw, 3rem)" }}
+        style={{ gap: "clamp(1rem, 4vw, 2.3rem)" }}
       >
         <Link href="/" className="link-hover-box hover:text-primary transition-colors">:)</Link>
         <Link href="/about" className="link-hover-box hover:text-primary transition-colors">About</Link>
