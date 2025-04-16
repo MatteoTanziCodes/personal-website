@@ -11,40 +11,46 @@ export default function Navbar() {
 
   useEffect(() => setMounted(true), []);
 
-  return (
-    <nav className="w-full border-b border-white/10 bg-slate-900 px-6 py-4 text-white flex justify-between items-center">
-      {/* Left: Navigation Links */}
-      <div className="flex gap-6 text-sm font-medium">
-        <Link href="/about" className="hover:text-primary transition-colors">About</Link>
-        <Link href="/projects" className="hover:text-primary transition-colors">Projects</Link>
-        <Link href="/trips" className="hover:text-primary transition-colors">Trips</Link>
-        <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
-        <a href="/Matteo_Tanzi_Resume_2025.pdf" target="_blank" className="hover:text-primary transition-colors">
-          Resume
-        </a>
-      </div>
+  if (!mounted) return null; // 🚨 key part: don't render *anything* until client matches theme
 
-      {/* Right: GitHub + Theme Toggle */}
-      <div className="flex items-center gap-4">
+  return (
+    <nav
+      className="relative w-full border-b py-4 px-4 sm:px-6 lg:px-8"
+      style={{
+        backgroundColor: "var(--bg)",
+        borderColor: "rgba(255,255,255,0.1)",
+        color: "var(--fg)",
+      }}
+    >
+      <div
+        className="w-full max-w-3xl mx-auto flex justify-end items-center font-medium pr-6 transition-[gap] duration-300"
+        style={{ gap: "clamp(1rem, 4vw, 3rem)" }}
+      >
+        <Link href="/" className="link-hover-box hover:text-primary transition-colors">:)</Link>
+        <Link href="/about" className="link-hover-box hover:text-primary transition-colors">About</Link>
+        <Link href="/projects" className="link-hover-box hover:text-primary transition-colors">Projects</Link>
+        <Link href="/research" className="link-hover-box hover:text-primary transition-colors">Research</Link>
+        <Link href="/trips" className="link-hover-box hover:text-primary transition-colors">Trips</Link>
+        <a href="/Matteo_Tanzi_Resume_2025.pdf" target="_blank" className="link-hover-box hover:text-primary transition-colors">Resume</a>
+
         <a
           href="https://github.com/MatteoTanziCodes"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-primary transition-colors"
+          className="link-hover-box hover:text-primary transition-colors"
+          aria-label="View GitHub"
         >
-          <Github size={20} />
+          <Github size={20} strokeWidth={1.5} />
         </a>
-
-        {mounted && (
-          <button
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            aria-label="Toggle Theme"
-            className="hover:text-primary transition-colors"
-          >
-            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
-          </button>
-        )}
       </div>
+
+      <button
+        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        aria-label="Toggle Theme"
+        className="absolute right-4 top-1/2 -translate-y-1/2 link-hover-box hover:text-primary transition-colors"
+      >
+        {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+      </button>
     </nav>
   );
 }

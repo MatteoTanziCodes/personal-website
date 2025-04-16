@@ -1,11 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@components/Navbar";
 import { Providers } from "@components/Providers"; 
-
-const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
+import Footer from "@components/Footer";
 
 export const metadata: Metadata = {
   title: "Matteo Tanzi | Software Developer",
@@ -14,13 +11,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className="" suppressHydrationWarning>
       <body className="bg-slate-900 text-white antialiased">
         <Providers>
           <Navbar />
-          <main className="max-w-4xl mx-auto px-6 py-8">{children}</main>
+          <main className="w-full flex justify-center px-4 sm:px-6 lg:px-8 py-12">
+            <div className="w-full max-w-3xl">{children}</div>
+          </main>
+          <Footer />
         </Providers>
-      </body>
+      </body>    
     </html>
   );
 }
