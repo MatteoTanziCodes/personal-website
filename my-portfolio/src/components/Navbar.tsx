@@ -4,14 +4,30 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Github, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
 
-  if (!mounted) return null; // 🚨 key part: don't render *anything* until client matches theme
+  const links = [
+    { label: ":)", href: "/" },
+    { label: "About", href: "/about" },
+    { label: "Projects", href: "/projects" },
+    { label: "Research", href: "/research" },
+    { label: "Trips", href: "/trips" },
+  ];
+
+  const getClassName = (href: string) =>
+    `link-hover-box transition-colors duration-200 ${
+      pathname === href
+        ? "text-[#60A5FA] font-semibold" // ✅ FORCE blue + bold on active
+        : "text-[var(--fg)] hover:text-primary"
+    }`;
 
   return (
     <nav
@@ -26,18 +42,25 @@ export default function Navbar() {
         className="w-full max-w-3xl mx-auto flex justify-end items-center font-medium pr-6 transition-[gap] duration-300"
         style={{ gap: "clamp(1rem, 4vw, 2.3rem)" }}
       >
-        <Link href="/" className="link-hover-box hover:text-primary transition-colors">:)</Link>
-        <Link href="/about" className="link-hover-box hover:text-primary transition-colors">About</Link>
-        <Link href="/projects" className="link-hover-box hover:text-primary transition-colors">Projects</Link>
-        <Link href="/research" className="link-hover-box hover:text-primary transition-colors">Research</Link>
-        <Link href="/trips" className="link-hover-box hover:text-primary transition-colors">Trips</Link>
-        <a href="/Matteo_Tanzi_Resume_2025.pdf" target="_blank" className="link-hover-box hover:text-primary transition-colors">Resume</a>
+        {links.map((link) => (
+          <Link key={link.href} href={link.href} className={getClassName(link.href)}>
+            {link.label}
+          </Link>
+        ))}
+
+        <a
+          href="/Matteo_Tanzi_Resume_2025.pdf"
+          target="_blank"
+          className="link-hover-box text-[var(--fg)] hover:text-primary transition-colors"
+        >
+          Resume
+        </a>
 
         <a
           href="https://github.com/MatteoTanziCodes"
           target="_blank"
           rel="noopener noreferrer"
-          className="link-hover-box hover:text-primary transition-colors"
+          className="link-hover-box text-[var(--fg)] hover:text-primary transition-colors"
           aria-label="View GitHub"
         >
           <Github size={20} strokeWidth={1.5} />

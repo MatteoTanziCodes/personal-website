@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import AboutMe from "./about/AboutMe";
+import Contact from "./about/Contact";
+import Work from "./about/Work";
+import Current from "./about/Current";
+import Tools from "./about/Tools";
+import InterviewsSpeaking from "./about/Speaking";
 
 const sections = [
   { id: "about-me", label: "About" },
@@ -16,65 +21,90 @@ export default function AboutSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(sections[0].id);
 
-  // IntersectionObserver to update active section
+  // Intersection Observer: track active section
   useEffect(() => {
+    const targets = document.querySelectorAll(".scroll-section");
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.find((entry) => entry.intersectionRatio > 0.5);
+        const visible = entries.find((entry) => entry.isIntersecting);
         if (visible) {
           setActive(visible.target.id);
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.51 }
     );
 
-    const elems = document.querySelectorAll(".scroll-section");
-    elems.forEach((el) => observer.observe(el));
-    return () => {
-      elems.forEach((el) => observer.unobserve(el));
-    };
+    targets.forEach((el) => observer.observe(el));
+    return () => targets.forEach((el) => observer.unobserve(el));
   }, []);
 
-  // Custom wheel handler for snapping
+  // Smooth wheel scroll with manual logic
   useEffect(() => {
-    const scrollContainer = containerRef.current;
-    if (!scrollContainer) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     let isScrolling = false;
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      if (isScrolling) return;
-      // Lower threshold to catch smaller scrolls
-      if (Math.abs(e.deltaY) < 5) return;
 
-      const currentIndex = sections.findIndex((s) => s.id === active);
-      const direction = e.deltaY > 0 ? 1 : -1;
-      const nextIndex = Math.max(
-        0,
-        Math.min(currentIndex + direction, sections.length - 1)
-      );
-
-      if (nextIndex !== currentIndex) {
+    const scrollToSection = (index: number) => {
+      const nextId = sections[index]?.id;
+      const el = document.getElementById(nextId);
+      if (el) {
         isScrolling = true;
-        const target = scrollContainer.children[nextIndex] as HTMLElement;
-        target.scrollIntoView({ behavior: "smooth" });
-        setActive(sections[nextIndex].id);
-        // Release debounce after animation completes
+        el.scrollIntoView({ behavior: "smooth" });
         setTimeout(() => {
+          setActive(nextId);
           isScrolling = false;
         }, 800);
       }
     };
 
-    scrollContainer.addEventListener("wheel", handleWheel, { passive: false });
-    return () => scrollContainer.removeEventListener("wheel", handleWheel);
+    const handleWheel = (e: WheelEvent) => {
+      if (isScrolling || Math.abs(e.deltaY) < 10) return;
+      e.preventDefault();
+
+      const currentIndex = sections.findIndex((s) => s.id === active);
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const nextIndex = Math.max(0, Math.min(sections.length - 1, currentIndex + direction));
+      if (nextIndex !== currentIndex) {
+        scrollToSection(nextIndex);
+      }
+    };
+
+    const handleKey = (e: KeyboardEvent) => {
+      const currentIndex = sections.findIndex((s) => s.id === active);
+      if (e.key === "ArrowDown") {
+        const next = Math.min(sections.length - 1, currentIndex + 1);
+        scrollToSection(next);
+      } else if (e.key === "ArrowUp") {
+        const prev = Math.max(0, currentIndex - 1);
+        scrollToSection(prev);
+      }
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("keydown", handleKey);
+    };
   }, [active]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
       {/* Dot Navigation */}
       <div className="fixed top-1/2 -translate-y-1/2 right-6 z-10">
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-4 items-center">
+          <li>
+            <button
+              onClick={() => {
+                const first = document.getElementById("about-me");
+                first?.scrollIntoView({ behavior: "smooth" });
+              }}
+              aria-label="Back to top"
+              className="w-3 h-3 bg-white rounded-full border border-zinc-400 hover:bg-primary transition-all"
+            />
+          </li>
           {sections.map((s) => (
             <li key={s.id}>
               <a
@@ -88,46 +118,18 @@ export default function AboutSection() {
         </ul>
       </div>
 
-      {/* Scrollable Sections */}
+      {/* Section Scroll Container */}
       <div
         ref={containerRef}
         className="w-full h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide"
       >
-        {sections.map((s) => (
-          <Section key={s.id} id={s.id} title={s.label}>
-            <p>
-              This is the <strong>{s.label}</strong> section. Add your content here!
-            </p>
-          </Section>
-        ))}
+        <AboutMe />
+        <Contact />
+        <Work />
+        <Current />
+        <Tools />
+        <InterviewsSpeaking />
       </div>
     </div>
-  );
-}
-
-function Section({
-  id,
-  title,
-  children,
-}: {
-  id: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section
-      id={id}
-      className="scroll-section snap-start h-[calc(100vh-8rem)] flex flex-col justify-center items-center px-8 py-12"
-    >
-      <motion.h2
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="text-4xl font-bold text-[var(--fg)] mb-4"
-      >
-        {title}
-      </motion.h2>
-      <div className="text-[var(--muted)] max-w-2xl text-center">{children}</div>
-    </section>
   );
 }

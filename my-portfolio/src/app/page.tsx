@@ -56,10 +56,23 @@ export default function HomePage() {
 
         {/* ========== Trips Section Placeholder ========== */}
         <section id="trips" className="mb-10 text-left">
-          <h2 className="text-2xl font-semibold mb-4" style={{ color: "var(--fg)" }}>Trips</h2>
-          <p className="text-[color:var(--muted)]">Coming soon...</p>
+          <h2 className="text-2xl font-semibold mb-6" style={{ color: "var(--fg)" }}>
+            Trips
+          </h2>
+
+          <div className="flex flex-wrap gap-6 text-lg font-semibold">
+            {["2024", "2023", "2022", "2009"].map((year) => (
+              <a
+                key={year}
+                href={`/trips#year-${year}`}
+                className="link-hover-box text-[var(--fg)] hover:text-primary transition-colors"
+              >
+                {year}
+              </a>
+            ))}
+          </div>
         </section>
-        
+   
       </div>
     </section>
   );

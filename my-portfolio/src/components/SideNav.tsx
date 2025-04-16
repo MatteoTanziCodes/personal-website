@@ -12,11 +12,13 @@ import { useState } from "react";
 import { MatrixTransitionText } from "./MatrixTransitionText";
 
 const roles = [
+  "Tae",
   "Matteo Tanzi",
   "Full-stack Dev",
   "AWS Builder",
   "AI Researcher",
   "Creative Thinker",
+  "Computer Vision Lover",
 ];
 
 export default function SideNav() {

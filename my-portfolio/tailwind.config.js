@@ -11,6 +11,7 @@ module.exports = {
         "foreground-dark": "#EDEDED",
         "muted": "#9CA3AF",
         primary: "#6366F1", // Indigo for accents
+        secondary: "#60A5FA",
       },
       fontFamily: {
         sans: ["Satoshi", "sans-serif"],
@@ -19,7 +20,10 @@ module.exports = {
         header: '64px', // Adjust to match your navbar height
         footer: '64px', // Adjust to match your footer height
       },
+      variants: {
+        scrollbar: ['rounded'],
+      },
     },
   },
-  plugins: [],
+  plugins: [require('tailwind-scrollbar')],
 };
