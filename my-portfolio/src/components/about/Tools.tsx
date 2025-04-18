@@ -1,6 +1,7 @@
 "use client";
 
-import { Icon } from "@iconify/react";
+import { Icon } from "@/utils/icons";
+import AnimatedWrapper from "@/components/AnimatedWrapper";
 
 const TOOL_CATEGORIES: Record<string, string[]> = {
   "Languages": [
@@ -42,53 +43,37 @@ const TOOL_CATEGORIES: Record<string, string[]> = {
   ],
 };
 
-const ICON_OVERRIDES: Record<string, string> = {
-  rest: "mdi:api",
-  filebeat: "mdi:file-chart",
-  apachekafka: "simple-icons:apachekafka",
-  soapui: "mdi:test-tube",   
-  jira: "logos:jira",
-  confluence: "logos:confluence",
-  java: "logos:java",
-  bash: "mdi:bash",
-};
-
 export default function Tools() {
   return (
-    <section
-      id="tools"
-      className="scroll-section snap-start min-h-[calc(100vh-8rem)] flex flex-col justify-start pt-24 px-8 pb-10"
-    >
-      <h2 className="text-3xl font-bold text-[var(--fg)] mb-4">Tools</h2>
-
-      {Object.entries(TOOL_CATEGORIES).map(([category, slugs]) => (
-        <div key={category} className="mb-6">
-          <h3 className="text-lg font-semibold text-[var(--fg)] mb-3">
-            {category}
-          </h3>
-          <div className="flex flex-wrap gap-4">
-            {slugs.map((slug) => {
-              const iconKey = ICON_OVERRIDES[slug] || `simple-icons:${slug}`;
-              return (
-                <div
-                  key={slug}
-                  className="flex flex-col items-center gap-1 w-14"
-                >
-                  <Icon
-                    icon={iconKey}
-                    width={20}
-                    height={20}
-                    className="text-[var(--fg)]"
-                  />
-                  <span className="text-center text-xs text-[var(--muted)] break-all">
-                    {slug.replace(/[-.]/g, " ")}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+    <section id="tools" className="scroll-section snap-start min-h-screen flex flex-col justify-center items-center px-8">
+      <AnimatedWrapper>
+        <div className="w-full max-w-3xl space-y-8">
+          <h2 className="text-4xl font-bold text-[var(--fg)] mb-4">Tools</h2>
+          {Object.entries(TOOL_CATEGORIES).map(([category, slugs]) => (
+            <div key={category} className="mb-6">
+              <h3 className="text-lg font-semibold text-[var(--fg)] mb-3">
+                {category}
+              </h3>
+              <div className="flex flex-wrap gap-4">
+                {slugs.map((slug) => (
+                  <div
+                    key={slug}
+                    className="flex flex-col items-center gap-1 w-14"
+                  >
+                    <Icon
+                      name={slug as any} // TODO: Add proper typing for all tool icons
+                      size={20}
+                    />
+                    <span className="text-center text-xs text-[var(--muted)] break-all">
+                      {slug.replace(/[-.]/g, " ")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </AnimatedWrapper>
     </section>
   );
 }

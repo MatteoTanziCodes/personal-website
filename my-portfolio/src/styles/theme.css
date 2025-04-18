@@ -1,0 +1,42 @@
+/* Theme Variables */
+:root {
+  --bg: #FAFAFA;
+  --fg: #2D2D2D;
+  --muted: #767b85;
+  --primary: #60A5FA;
+  --card: rgba(0, 0, 0, 0.03);
+  --border: rgba(0, 0, 0, 0.1);
+  --hover: rgba(0, 0, 0, 0.02);
+  --scrollbar: rgba(100, 100, 100, 0.3);
+  --scrollbar-hover: rgba(100, 100, 100, 0.5);
+}
+
+.dark {
+  --bg: #0B0D10;
+  --fg: #EDEDED;
+  --muted: #D1D5DB;
+  --primary: #60A5FA;
+  --card: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.1);
+  --hover: rgba(255, 255, 255, 0.05);
+  --scrollbar: rgba(255, 255, 255, 0.2);
+  --scrollbar-hover: rgba(255, 255, 255, 0.4);
+}
+
+/* Link hover effects */
+.link-hover-box {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.link-hover-box:hover {
+  background-color: var(--hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 639px) {
+  .link-hover-box {
+    padding: 0.25rem 0.5rem;
+  }
+}

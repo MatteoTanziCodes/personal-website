@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Github, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { GitHubIcon, MoonIcon, SunIcon } from "@/components/icons";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
@@ -25,7 +25,7 @@ export default function Navbar() {
   const getClassName = (href: string) =>
     `link-hover-box transition-colors duration-200 ${
       pathname === href
-        ? "text-[#60A5FA] font-semibold" // ✅ FORCE blue + bold on active
+        ? "text-[#60A5FA] font-semibold"
         : "text-[var(--fg)] hover:text-primary"
     }`;
 
@@ -63,7 +63,7 @@ export default function Navbar() {
           className="link-hover-box text-[var(--fg)] hover:text-primary transition-colors"
           aria-label="View GitHub"
         >
-          <Github size={20} strokeWidth={1.5} />
+          <GitHubIcon size={20} />
         </a>
       </div>
 
@@ -72,7 +72,7 @@ export default function Navbar() {
         aria-label="Toggle Theme"
         className="absolute right-4 top-1/2 -translate-y-1/2 link-hover-box hover:text-primary transition-colors"
       >
-        {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+        {theme === "light" ? <MoonIcon size={18} /> : <SunIcon size={18} />}
       </button>
     </nav>
   );

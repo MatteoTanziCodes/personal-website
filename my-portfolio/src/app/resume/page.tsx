@@ -1,8 +1,10 @@
 // src/app/resume/page.tsx
 import SectionHeader from '@components/SectionHeader';
+import ThemeClientReady from "@/components/ThemeClientReady";
 
 export default function ResumePage() {
   return (
+    <ThemeClientReady>
     <div>
       <SectionHeader title="Resume" />
       <a
@@ -36,5 +38,6 @@ export default function ResumePage() {
         </div>
       </div>
     </div>
+    </ThemeClientReady>
   );
 }

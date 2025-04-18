@@ -27,12 +27,16 @@ export default function AboutSection() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.find((entry) => entry.isIntersecting);
-        if (visible) {
-          setActive(visible.target.id);
-        }
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          }
+        });
       },
-      { threshold: 0.51 }
+      { 
+        threshold: 0.3,  // Lowered threshold for faster detection
+        rootMargin: "-5% 0px"  // Reduced margin for quicker updates
+      }
     );
 
     targets.forEach((el) => observer.observe(el));
@@ -45,17 +49,19 @@ export default function AboutSection() {
     if (!container) return;
 
     let isScrolling = false;
+    let scrollTimeout: NodeJS.Timeout;
 
     const scrollToSection = (index: number) => {
       const nextId = sections[index]?.id;
       const el = document.getElementById(nextId);
-      if (el) {
+      if (el && !isScrolling) {
         isScrolling = true;
+        setActive(nextId); // Update active state immediately
         el.scrollIntoView({ behavior: "smooth" });
-        setTimeout(() => {
-          setActive(nextId);
+        
+        scrollTimeout = setTimeout(() => {
           isScrolling = false;
-        }, 800);
+        }, 800); // Reduced timeout for faster response
       }
     };
 
@@ -95,23 +101,22 @@ export default function AboutSection() {
       {/* Dot Navigation */}
       <div className="fixed top-1/2 -translate-y-1/2 right-6 z-10">
         <ul className="flex flex-col gap-4 items-center">
-          <li>
-            <button
-              onClick={() => {
-                const first = document.getElementById("about-me");
-                first?.scrollIntoView({ behavior: "smooth" });
-              }}
-              aria-label="Back to top"
-              className="w-3 h-3 bg-white rounded-full border border-zinc-400 hover:bg-primary transition-all"
-            />
-          </li>
           {sections.map((s) => (
             <li key={s.id}>
-              <a
-                href={`#${s.id}`}
-                className={`block w-3 h-3 rounded-full transition-colors ${
-                  active === s.id ? "bg-primary" : "bg-zinc-400"
+              <button
+                onClick={() => {
+                  const section = document.getElementById(s.id);
+                  if (section) {
+                    setActive(s.id); // Update active state immediately
+                    section.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                  active === s.id 
+                    ? "bg-primary scale-125" 
+                    : "bg-zinc-400 hover:bg-primary/50"
                 }`}
+                aria-label={`Scroll to ${s.label} section`}
               />
             </li>
           ))}

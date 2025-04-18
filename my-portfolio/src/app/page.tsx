@@ -1,79 +1,92 @@
+"use client";
+
 import SideNav from "@components/SideNav";
+import ProjectCard from "@components/homepage/ProjectCard";
+import ResearchCard from "@components/homepage/ResearchCard";
+import { PROJECTS } from "@/data/projects";
+import { RESEARCH } from "@/data/research";
+import AnimatedText from "@/components/AnimatedText";
+import AnimatedWrapper from "@/components/AnimatedWrapper";
+import ThemeClientReady from "@/components/ThemeClientReady";
 
 export default function HomePage() {
+  const latestProjects = PROJECTS.slice(0, 2); // only show the two most recent
+  const latestResearch = RESEARCH.slice(0, 2); // adjust if needed
+
   return (
+    <ThemeClientReady>
     <section className="relative w-full px-4 sm:px-6 lg:px-8 py-20">
-      {/* ⬅️ Side Navigation (visible on lg+) */}
       <SideNav />
-
-      <div className="w-full max-w-3xl ml-auto ">
-
-        {/* ========== About Section ========== */}
+      <div className="w-full max-w-3xl ml-auto">
+        {/* === About === */}
         <section id="about" className="mb-30">
-          <h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-4 text-right" style={{ color: "var(--fg)" }}>
-            Hey, it&apos;s Matteo :)
-          </h1>
-
-          <p className="text-lg sm:text-xl leading-relaxed text-right" style={{ color: "var(--muted)" }}>
+        <AnimatedText text="Hey, it's Matteo :)" />
+          <p className="text-lg sm:text-xl leading-relaxed text-right text-[var(--muted)]">
             I&apos;m a Full-stack Developer focused on cloud-native solutions, real-time monitoring systems, and secure internal platforms using AWS.
             Currently working at BMO and researching AI and Computer Vision for real-world applications.
-            
           </p>
         </section>
-        {/* ========== Contact Section ========== */}
+
+        {/* === Contact === */}
         <section id="contact" className="mb-10 text-left">
-          <h2 className="text-2xl font-semibold mb-4" style={{ color: "var(--fg)" }}>Contact</h2>
+          <AnimatedWrapper>
+          <h2 className="text-2xl font-semibold mb-4 text-[var(--fg)]">Contact</h2>
           <div className="flex justify-start gap-4">
-            <a
-              href="/about#contact"
-              className="border border-[color:var(--fg)] text-[color:var(--fg)] hover:bg-[rgba(99,102,241,0.08)] px-4 py-2 rounded"
-            >
-              Contact Me
-            </a>
-            <a
-              href="/Matteo_Tanzi_Resume_2025.pdf"
-              target="_blank"
-              className="link-hover-box hover:text-primary transition-colors"
-              style={{ color: "var(--fg)" }}
-            >
-              View Resume
-            </a>
-            
+            <a href="/about#contact" className="border border-[color:var(--fg)] text-[color:var(--fg)] hover:bg-[rgba(99,102,241,0.08)] px-4 py-2 rounded">Contact Me</a>
+            <a href="/Matteo_Tanzi_Resume_2025.pdf" target="_blank" className="link-hover-box hover:text-primary transition-colors text-[color:var(--fg)]">View Resume</a>
           </div>
+          </AnimatedWrapper>
         </section>
 
-        {/* ========== Projects Section Placeholder ========== */}
+        {/* Projects */}
         <section id="projects" className="mb-10 text-left">
-          <h2 className="text-2xl font-semibold mb-4" style={{ color: "var(--fg)" }}>Projects</h2>
-          <p className="text-[color:var(--muted)]">Coming soon...</p>
+        <AnimatedWrapper>
+          <h2 className="text-2xl font-semibold mb-4 text-[var(--fg)]">Projects</h2>
+          <div className="flex flex-col gap-6">
+            {latestProjects.map((project, i) => (
+              <div key={i}>
+                <ProjectCard 
+                  {...project} 
+                  onClick={() => window.open(project.github, '_blank', 'noopener,noreferrer')}
+                />
+              </div>
+            ))}
+          </div>
+          </AnimatedWrapper>
         </section>
 
-        {/* ========== Research Section Placeholder ========== */}
+        {/* Research */}
         <section id="research" className="mb-10 text-left">
-          <h2 className="text-2xl font-semibold mb-4" style={{ color: "var(--fg)" }}>Research</h2>
-          <p className="text-[color:var(--muted)]">Coming soon...</p>
+        <AnimatedWrapper>
+          <h2 className="text-2xl font-semibold mb-4 text-[var(--fg)]">Research</h2>
+          <div className="flex flex-col gap-6">
+            {latestResearch.map((research, i) => (
+              <div key={i}>
+                <ResearchCard 
+                  {...research} 
+                  onClick={() => window.open(research.github, '_blank', 'noopener,noreferrer')}
+                />
+              </div>
+            ))}
+          </div>
+          </AnimatedWrapper>
         </section>
 
-        {/* ========== Trips Section Placeholder ========== */}
+        {/* === Trips === */}
         <section id="trips" className="mb-10 text-left">
-          <h2 className="text-2xl font-semibold mb-6" style={{ color: "var(--fg)" }}>
-            Trips
-          </h2>
-
+        <AnimatedWrapper>
+          <h2 className="text-2xl font-semibold mb-6 text-[var(--fg)]">Trips</h2>
           <div className="flex flex-wrap gap-6 text-lg font-semibold">
             {["2024", "2023", "2022", "2009"].map((year) => (
-              <a
-                key={year}
-                href={`/trips#year-${year}`}
-                className="link-hover-box text-[var(--fg)] hover:text-primary transition-colors"
-              >
+              <a key={year} href={`/trips#year-${year}`} className="link-hover-box text-[var(--fg)] hover:text-primary transition-colors">
                 {year}
               </a>
             ))}
           </div>
+          </AnimatedWrapper>
         </section>
-   
       </div>
     </section>
+    </ThemeClientReady>
   );
 }
