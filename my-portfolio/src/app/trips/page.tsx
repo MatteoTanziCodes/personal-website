@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import TripCard from "@/components/TripCard";
 import { tripData } from "@/data/trips";
 import BackToTopButton from "@/components/BackToTopButton";
@@ -15,8 +16,37 @@ const groupedByYear =
     return acc;
   }, {} as Record<number, typeof tripData>);
 
+function scrollToHashIfPresent() {
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash;
+    if (hash) {
+      // slight delay for hydration & layout
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 300); 
+    }
+  }
+
 export default function TripsPage() {
   const sortedYears = Object.keys(groupedByYear).sort((a, b) => Number(b) - Number(a));
+
+  // 🔧 Smooth scroll after hydration (fixes broken anchor navigation)
+  useEffect(() => {
+    scrollToHashIfPresent();
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash;
+    if (hash) {
+      const target = document.querySelector(hash);
+      if (target) {
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 200); // Delay allows page + animation to fully load
+      }
+    }
+  }, []);  
 
   return (
     <ThemeClientReady>

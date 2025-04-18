@@ -7,7 +7,34 @@ import Footer from "@components/Footer";
 export const metadata: Metadata = {
   title: "Matteo Tanzi | Software Developer",
   description: "Personal site showcasing projects, resume, and research.",
+  icons: {
+    icon: "/assets/favicon.ico",
+    apple: "/assets/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "Matteo Tanzi | Software Developer",
+    description: "Explore my portfolio of full-stack development, AWS projects, and AI research.",
+    url: "https://your-domain.com",
+    siteName: "Matteo Tanzi",
+    images: [
+      {
+        url: "/assets/og-image.png", // stored in /public/assets/
+        width: 1200,
+        height: 630,
+        alt: "Matteo Tanzi Portfolio Preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Matteo Tanzi | Software Developer",
+    description: "Explore my portfolio of full-stack development, AWS projects, and AI research.",
+    images: ["/assets/og-image.png"],
+  },
 };
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
