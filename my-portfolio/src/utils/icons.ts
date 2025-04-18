@@ -31,6 +31,8 @@ export const iconMap = {
   book: "lucide:book-open",
   plane: "lucide:plane-takeoff",
   globe: "lucide:globe",
+  menu: "lucide:menu",
+  x: "lucide:x",
 
   // Add all tool icons
   python: "simple-icons:python",

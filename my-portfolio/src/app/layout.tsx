@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-slate-900 text-white antialiased">
         <Providers>
           <Navbar />
-          <main className="w-full flex justify-center px-4 sm:px-6 lg:px-8 py-12">
+          <main className="w-full flex justify-center pt-[64px] px-4 sm:px-6 lg:px-8 py-12">
             <div className="w-full max-w-3xl">{children}</div>
           </main>
           <Footer />

@@ -151,3 +151,11 @@ export function KibanaIcon({ className, size = 20 }: { className?: string; size?
 export function DockerIcon({ className, size = 20 }: { className?: string; size?: number }) {
   return <Icon name="docker" className={className} size={size} />;
 }
+
+export function MenuIcon({ className, size = 20 }: { className?: string; size?: number }) {
+  return <Icon name="menu" className={className} size={size} />;
+}
+
+export function XIcon({ className, size = 20 }: { className?: string; size?: number }) {
+  return <Icon name="x" className={className} size={size} />;
+}

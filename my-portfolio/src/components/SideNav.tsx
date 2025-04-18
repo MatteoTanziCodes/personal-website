@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { MatrixTransitionText } from "./MatrixTransitionText";
-import AnimatedSlideInWrapper from "./AnimatedSlideInWrapper"; // use the existing wrapper
+import AnimatedSlideInWrapper from "./AnimatedSlideInWrapper";
 
 const roles = [
   "Tae",
@@ -37,22 +37,24 @@ export default function SideNav() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 hidden lg:flex h-screen w-64 flex-col px-6 py-8 border-r border-white/10 bg-[var(--bg)] text-base z-30">
+    <aside className="hidden lg:flex fixed top-0 left-0 h-screen w-64 z-40 bg-[var(--bg)] border-r border-[var(--border)] text-base">
+      <div className="flex flex-col w-full h-full overflow-y-auto px-6 py-8 custom-scrollbar">
       <AnimatedSlideInWrapper className="flex flex-col">
         {/* Animated Header */}
         <div className="mb-6 font-semibold text-[var(--fg)] text-lg min-h-[1.5rem]">
-          <MatrixTransitionText text={roles[roleIndex]} onDone={handleDone} />
+          
         </div>
 
         {/* About Me */}
         <div className="mb-6">
-          <h3 className="font-semibold text-[var(--fg)] text-lg mb-2">About Me</h3>
+          <h3 className="font-semibold text-[var(--fg)] text-lg mb-2">
+          <MatrixTransitionText text={roles[roleIndex]} onDone={handleDone} />
+          </h3>
           <p className="text-[var(--muted)] leading-relaxed text-base">
             I enjoy weight lifting, travelling, basketball (playing and coaching),
             and spending time with my partner and friends.
             <br /><br />
-            I&apos;m currently improving my reading habits, learning to cook, and
-            growing as a developer through{" "}
+            I&apos;m currently improving my reading habits, learning to cook, and growing as a developer through{" "}
             <a href="/projects" className="hover:text-primary">projects</a>,{" "}
             <a href="/research" className="hover:text-primary">research</a>, and LeetCode.
             <br /><br />
@@ -91,6 +93,7 @@ export default function SideNav() {
           </div>
         </div>
       </AnimatedSlideInWrapper>
+      </div>
     </aside>
   );
 }
