@@ -1,10 +1,12 @@
 // src/app/resume/page.tsx
 import SectionHeader from '@components/SectionHeader';
 import ThemeClientReady from "@/components/ThemeClientReady";
+import PageWrapper from '@/components/PageWrapper';
 
 export default function ResumePage() {
   return (
     <ThemeClientReady>
+      <PageWrapper>
     <div>
       <SectionHeader title="Resume" />
       <a
@@ -38,6 +40,7 @@ export default function ResumePage() {
         </div>
       </div>
     </div>
+    </PageWrapper>
     </ThemeClientReady>
   );
 }

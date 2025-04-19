@@ -6,6 +6,7 @@ import { tripData } from "@/data/trips";
 import BackToTopButton from "@/components/BackToTopButton";
 import ThemeClientReady from "@/components/ThemeClientReady";
 import AnimatedWrapper from "@/components/AnimatedWrapper";
+import PageWrapper from "@/components/PageWrapper";
 
 // Group by year
 const groupedByYear =
@@ -50,7 +51,7 @@ export default function TripsPage() {
 
   return (
     <ThemeClientReady>
-      <section className="px-4 sm:px-8 py-12">
+      <PageWrapper>
         {/* Title */}
         <AnimatedWrapper>
           <h1 className="text-3xl font-bold mb-10 text-center text-[var(--fg)]">
@@ -92,7 +93,7 @@ export default function TripsPage() {
         ))}
 
         <BackToTopButton />
-      </section>
+      </PageWrapper>
     </ThemeClientReady>
   );
 }

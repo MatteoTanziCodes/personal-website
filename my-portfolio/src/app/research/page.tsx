@@ -6,11 +6,12 @@ import ThemeClientReady from "@/components/ThemeClientReady";
 import StaggerReveal from "@/components/StaggerReveal";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import PageWrapper from "@/components/PageWrapper";
 
 export default function ResearchPage() {
   return (
     <ThemeClientReady>
-      <section className="px-4 sm:px-8 py-20 max-w-6xl mx-auto">
+      <PageWrapper>
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -59,7 +60,7 @@ export default function ResearchPage() {
             </motion.div>
           ))}
         </StaggerReveal>
-      </section>
+      </PageWrapper>
     </ThemeClientReady>
   );
 }
