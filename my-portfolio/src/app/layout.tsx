@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Matteo Tanzi | Software Developer",
     description: "Explore my portfolio of full-stack development, AWS projects, and AI research.",
-    url: "https://your-domain.com",
+    url: "https://matteo-tanzi.ca",
     siteName: "Matteo Tanzi",
     images: [
       {
