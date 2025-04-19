@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Icon } from "@/utils/icons";
+import { Icon, iconMap } from "@/utils/icons";
 import AnimatedWrapper from "@/components/AnimatedWrapper";
 
 const TOOL_CATEGORIES: Record<string, string[]> = {
@@ -56,7 +56,7 @@ export default function Tools() {
                     }`}
                   >
                     <Icon
-                      name={slug as any}
+                      name={slug as keyof typeof iconMap}
                       size={isCompact ? 16 : 20}
                     />
                     <span
