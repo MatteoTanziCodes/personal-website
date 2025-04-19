@@ -82,7 +82,7 @@ export default function TripsPage() {
               </h2>
             </AnimatedWrapper>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {groupedByYear[Number(year)].map((trip, index) => (
+              {(groupedByYear[Number(year)] ?? []).map((trip, index) => (
                 <AnimatedWrapper key={`${year}-${index}`} delay={index * 0.05}>
                   <TripCard image={trip.image} location={trip.location} />
                 </AnimatedWrapper>

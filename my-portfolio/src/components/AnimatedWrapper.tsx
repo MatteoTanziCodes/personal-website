@@ -8,6 +8,7 @@ interface AnimatedWrapperProps {
   children: React.ReactNode;
   className?: string;
   as?: ElementType;
+  delay?: number;
 }
 
 export default function AnimatedWrapper({

@@ -52,18 +52,20 @@ export default function AboutSection() {
     let scrollTimeout: NodeJS.Timeout;
 
     const scrollToSection = (index: number) => {
+      clearTimeout(scrollTimeout); // ✅ cancel previous timeout
       const nextId = sections[index]?.id;
       const el = document.getElementById(nextId);
       if (el && !isScrolling) {
         isScrolling = true;
-        setActive(nextId); // Update active state immediately
+        setActive(nextId);
         el.scrollIntoView({ behavior: "smooth" });
-        
+
         scrollTimeout = setTimeout(() => {
           isScrolling = false;
-        }, 800); // Reduced timeout for faster response
+        }, 800);
       }
     };
+
 
     const handleWheel = (e: WheelEvent) => {
       if (isScrolling || Math.abs(e.deltaY) < 10) return;

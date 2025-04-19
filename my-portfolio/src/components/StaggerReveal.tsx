@@ -1,15 +1,16 @@
 "use client";
 
+import React, { JSX } from "react";
 import { motion } from "framer-motion";
 
 export default function StaggerReveal({
   children,
-  as: Tag = "div",
   className = "",
 }: {
   children: React.ReactNode;
   as?: keyof JSX.IntrinsicElements;
   className?: string;
+  delayOrder?: number;
 }) {
   return (
     <motion.div
