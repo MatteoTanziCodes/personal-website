@@ -5,6 +5,7 @@ import { Providers } from "@components/Providers";
 import Footer from "@components/Footer";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://matteo-tanzi.ca"),
   title: "Matteo Tanzi | Software Developer",
   description: "Personal site showcasing projects, resume, and research.",
   icons: {
@@ -43,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <Navbar />
           <main className="w-full flex justify-center pt-[64px] px-4 sm:px-6 lg:px-8 py-12">
-            <div className="w-full max-w-3xl">{children}</div>
+            {children}
           </main>
           <Footer />
         </Providers>

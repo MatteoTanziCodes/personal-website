@@ -8,6 +8,7 @@ import { RESEARCH } from "@/data/research";
 import AnimatedText from "@/components/AnimatedText";
 import AnimatedWrapper from "@/components/AnimatedWrapper";
 import ThemeClientReady from "@/components/ThemeClientReady";
+import PageWrapper from "@/components/PageWrapper";
 
 export default function HomePage() {
   const latestProjects = PROJECTS.slice(0, 2);
@@ -15,6 +16,7 @@ export default function HomePage() {
 
   return (
     <ThemeClientReady>
+      <PageWrapper>
       <section className="relative w-full lg:pl-64 px-4 sm:px-6 lg:px-8 py-20 min-h-screen">
         <SideNav />
 
@@ -106,6 +108,7 @@ export default function HomePage() {
           </section>
         </div>
       </section>
+      </PageWrapper>
     </ThemeClientReady>
   );
 }
