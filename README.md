@@ -2,7 +2,7 @@
 
 A developer-focused personal website showcasing my resume, research, and projects. Built with ❤️ using **Next.js**, **Tailwind CSS**, and **Framer Motion**.
 
-Live Site: [matteotanzi.dev](https://yourdomain.com) ← *(update once deployed)*
+Live Site: [matteotanzi.dev](https://matteo-tanzi.ca) ← *(update once deployed)*
 
 ---
 
@@ -11,51 +11,7 @@ Live Site: [matteotanzi.dev](https://yourdomain.com) ← *(update once deployed)
 - **Framework**: [Next.js](https://nextjs.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Hosting**: [Vercel](https://vercel.com/) *(free hosting + CI/CD)*
-
----
-
-## 📁 Project Structure
-
-    my-portfolio/
-    ├── public/
-    │   ├── Matteo_Tanzi_Resume_2025.pdf
-    │   └── assets/                     # Images, icons, screenshots
-    │
-    ├── src/
-    │   ├── app/                        # App Router entry point
-    │   │   ├── layout.tsx              # Global layout (with Navbar/Footer)
-    │   │   ├── page.tsx                # Landing (home) page
-    │   │   ├── globals.css             # Tailwind base styles
-    │   │   ├── resume/
-    │   │   │   └── page.tsx
-    │   │   ├── projects/
-    │   │   │   └── page.tsx
-    │   │   ├── research/
-    │   │   │   └── page.tsx
-    │   │   ├── contact/
-    │   │   │   └── page.tsx
-    │
-    │   ├── components/                 # Reusable UI components
-    │   │   ├── Navbar.tsx
-    │   │   ├── Footer.tsx
-    │   │   ├── SectionHeader.tsx
-    │   │   ├── ResumeCard.tsx
-    │   │   ├── ProjectCard.tsx
-    │   │   └── AnimatedWrapper.tsx
-    │
-    │   ├── lib/                        # Utilities, animation variants, etc.
-    │   │   └── framer.ts
-    │
-    │   ├── styles/                     # Optional for custom styles
-    │       └── (custom CSS if needed)
-    │
-    ├── tailwind.config.js             # Tailwind configuration
-    ├── postcss.config.js              # PostCSS plugins
-    ├── next.config.ts                 # Next.js config with import aliases
-    ├── tsconfig.json                  # TypeScript config (with paths)
-    ├── package.json
-    └── README.md
+- **Hosting**: [Vercel](https://vercel.com/)
 
 ---
 
