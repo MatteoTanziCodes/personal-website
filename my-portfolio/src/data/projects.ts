@@ -32,6 +32,6 @@ export const PROJECTS = [
     title: "Pokemon Simulation ",
     description: "A Pokemon Emulator that encorporates Java GUI and Object Oriented Design to simulate a pokemon.",
     builtWith: ["Java", "HTML", "CSS"],
-    github: "https://github.com/MatteoTanziCodes/payment-monitor",
+    github: "https://github.com/MatteoTanziCodes/PokemonSimulation",
   },
 ];
