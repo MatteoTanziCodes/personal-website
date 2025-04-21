@@ -7,6 +7,7 @@ import Work from "./about/Work";
 import Current from "./about/Current";
 import Tools from "./about/Tools";
 import InterviewsSpeaking from "./about/Speaking";
+import ScrollSection from "./ScrollSection";
 
 const sections = [
   { id: "about-me", label: "About" },
@@ -34,11 +35,11 @@ export default function AboutSection() {
         });
       },
       {
-        root: containerRef.current,         // ✅ Use explicit scroll container
-        threshold: 0.3,                     // ✅ Fair detection range
-        rootMargin: "0px 0px -25% 0px",     // ✅ Account for mobile toolbar height
+        root: containerRef.current,
+        threshold: 0.5, // more reliable middle detection
       }
     );
+    
 
     targets.forEach((el) => observer.observe(el));
     return () => targets.forEach((el) => observer.unobserve(el));
@@ -129,14 +130,24 @@ export default function AboutSection() {
       {/* Section Scroll Container */}
       <div
         ref={containerRef}
-        className="w-full h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide pt-[60px] sm:pt-0 scroll-snap-type: y proximity"
+        className="w-full h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide"
       >
-        <AboutMe />
-        <Contact />
-        <Work />
-        <Current />
-        <Tools />
-        <InterviewsSpeaking />
+          <AboutMe />
+        <ScrollSection id="contact">
+          <Contact />
+        </ScrollSection>
+        <ScrollSection id="work">
+          <Work />
+        </ScrollSection>
+        <ScrollSection id="current">
+          <Current />
+        </ScrollSection>
+        <ScrollSection id="tools">
+          <Tools />
+        </ScrollSection>
+        <ScrollSection id="interviews">
+          <InterviewsSpeaking />
+        </ScrollSection>
       </div>
     </div>
   );

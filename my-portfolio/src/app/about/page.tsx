@@ -9,8 +9,8 @@ export default function AboutPage() {
     <ThemeClientReady>
       <PageWrapper>
         <AboutSection />
-        <BackToTopButton />
       </PageWrapper>
+      <BackToTopButton />
     </ThemeClientReady>
   );
 }
