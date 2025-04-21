@@ -35,8 +35,9 @@ export default function AboutSection() {
         });
       },
       {
-        root: containerRef.current,
-        threshold: 0.5, // more reliable middle detection
+        threshold: 0.5, // good for mobile and desktop
+        // 🔧 Remove root for more consistent behavior
+        // root: containerRef.current, ❌
       }
     );
     
@@ -130,7 +131,7 @@ export default function AboutSection() {
       {/* Section Scroll Container */}
       <div
         ref={containerRef}
-        className="w-full h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide"
+        className="w-full h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide pt-[64px] sm:pt-0"
       >
           <AboutMe />
         <ScrollSection id="contact">
