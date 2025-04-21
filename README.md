@@ -2,7 +2,7 @@
 
 A developer-focused personal website showcasing my resume, research, and projects. Built with ❤️ using **Next.js**, **Tailwind CSS**, and **Framer Motion**.
 
-Live Site: [matteotanzi.dev](https://matteo-tanzi.ca) ← *(update once deployed)*
+Live Site: [matteo-tanzi.ca](https://matteo-tanzi.ca)
 
 ---
 
