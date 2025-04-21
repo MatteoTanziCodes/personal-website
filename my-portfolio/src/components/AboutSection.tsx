@@ -133,7 +133,9 @@ export default function AboutSection() {
         ref={containerRef}
         className="w-full h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide pt-[64px] sm:pt-0"
       >
+        <ScrollSection id="about-me">
           <AboutMe />
+        </ScrollSection>
         <ScrollSection id="contact">
           <Contact />
         </ScrollSection>
