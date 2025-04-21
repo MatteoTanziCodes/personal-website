@@ -9,7 +9,7 @@ export default function ScrollSection({
     return (
       <section
         id={id}
-        className="scroll-section snap-start min-h-screen pt-header px-6 pb-16 flex flex-col justify-center items-center"
+        className="scroll-section snap-start min-h-screen pt-header snap-mandatory px-6 pb-16 flex flex-col justify-center items-center"
       >
         {children}
       </section>
