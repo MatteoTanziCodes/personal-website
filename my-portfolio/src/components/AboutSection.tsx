@@ -34,9 +34,9 @@ export default function AboutSection() {
         });
       },
       {
-        threshold: 0.2, // lower threshold for quicker activation
-        root: containerRef.current || null, // make sure observer uses the correct scroll container
-        rootMargin: "0px 0px -25% 0px", // helps mobile compensate for mobile chrome
+        root: containerRef.current,         // ✅ Use explicit scroll container
+        threshold: 0.3,                     // ✅ Fair detection range
+        rootMargin: "0px 0px -25% 0px",     // ✅ Account for mobile toolbar height
       }
     );
 
@@ -129,7 +129,7 @@ export default function AboutSection() {
       {/* Section Scroll Container */}
       <div
         ref={containerRef}
-        className="w-full h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide"
+        className="w-full h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide pt-[60px] sm:pt-0 scroll-snap-type: y proximity"
       >
         <AboutMe />
         <Contact />
