@@ -46,7 +46,7 @@ export default function Work() {
         <div className="w-full max-w-3xl space-y-8">
           <h2 className="text-4xl font-bold text-[var(--fg)] mb-4">Work</h2>
           <Link
-            href="/Matteo_Tanzi_Resume_2025.pdf"
+            href="/resume-file"
             target="_blank"
             className="self-start mb-6 inline-flex items-center gap-1 px-4 py-2 border border-[color:var(--fg)] text-[color:var(--fg)] rounded hover:bg-primary/10 text-sm transition-colors"
           >

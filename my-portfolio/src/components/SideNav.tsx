@@ -18,8 +18,7 @@ const roles = [
   "Full-stack Dev",
   "AWS Builder",
   "AI Researcher",
-  "Creative Thinker",
-  "Computer Vision Lover",
+  "Creative Thinker"
 ];
 
 export default function SideNav() {
@@ -52,13 +51,13 @@ export default function SideNav() {
           </h3>
           <p className="text-[var(--muted)] leading-relaxed text-base">
             I enjoy weight lifting, travelling, basketball (playing and coaching),
-            and spending time with my partner and friends.
+            and spending time with people I care about.
             <br /><br />
-            I&apos;m currently improving my reading habits, learning to cook, and growing as a developer through{" "}
+            I&apos;m currently improving my health habits, learning to network, completing certifications, and growing as a developer through{" "}
             <a href="/projects" className="hover:text-primary">projects</a>,{" "}
             <a href="/research" className="hover:text-primary">research</a>, and LeetCode.
             <br /><br />
-            In the future, I’d love to become an entrepreneur (check out Ambassador Boost),
+            In the future, I’d love to become a solutions architect and eventually become an entrepreneur (check out Ambassador Boost and Rolodex in my applications),
             learn another language, and pick up the guitar.
           </p>
         </div>
@@ -85,7 +84,7 @@ export default function SideNav() {
                 </Link>
               </li>
               <li>
-                <Link href="/Matteo_Tanzi_Resume_2025.pdf" className="hover:text-primary flex items-center gap-2" target="_blank">
+                <Link href="/resume-file" className="hover:text-primary flex items-center gap-2" target="_blank">
                   <BookIcon /> Resume
                 </Link>
               </li>

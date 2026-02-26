@@ -34,7 +34,7 @@ export default function HomePage() {
               <h2 className="text-2xl font-semibold mb-4 text-[var(--fg)]">Contact</h2>
               <div className="flex justify-start gap-4 flex-wrap">
                 <a href="/about#contact" className="border border-[color:var(--fg)] text-[color:var(--fg)] hover:bg-[rgba(99,102,241,0.08)] px-4 py-2 rounded">Contact Me</a>
-                <a href="/Matteo_Tanzi_Resume_2025.pdf" target="_blank" className="link-hover-box hover:text-primary transition-colors text-[color:var(--fg)]">View Resume</a>
+                <a href="/resume-file" target="_blank" className="link-hover-box hover:text-primary transition-colors text-[color:var(--fg)]">View Resume</a>
               </div>
             </AnimatedWrapper>
           </section>

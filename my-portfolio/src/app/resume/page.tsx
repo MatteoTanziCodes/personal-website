@@ -10,7 +10,7 @@ export default function ResumePage() {
     <div>
       <SectionHeader title="Resume" />
       <a
-        href="/Matteo_Tanzi_Resume_2025.pdf"
+        href="/resume-file"
         className="text-primary underline"
         target="_blank"
         rel="noopener noreferrer"
