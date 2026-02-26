@@ -84,7 +84,7 @@ export default function SideNav() {
                 </Link>
               </li>
               <li>
-                <Link href="/Matteo_Tanzi_Resume_2025.pdf" className="hover:text-primary flex items-center gap-2" target="_blank">
+                <Link href="/resume-file" className="hover:text-primary flex items-center gap-2" target="_blank">
                   <BookIcon /> Resume
                 </Link>
               </li>

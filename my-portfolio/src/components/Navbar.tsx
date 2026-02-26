@@ -49,7 +49,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4 flex-wrap">
             <a
-              href="/Matteo_Tanzi_Resume_2026.pdf"
+              href="/resume-file"
               target="_blank"
               className="link-hover-box text-[var(--fg)] hover:text-primary transition-colors"
             >

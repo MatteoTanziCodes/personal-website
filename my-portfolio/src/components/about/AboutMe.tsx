@@ -22,7 +22,7 @@ export default function AboutMe() {
                 Toronto, ON
               </span>
               <a
-                href="/Matteo_Tanzi_Resume_2025.pdf"
+                href="/resume-file"
                 target="_blank"
                 className="border border-[color:var(--fg)] text-[color:var(--fg)] hover:bg-[rgba(99,102,241,0.08)] px-4 py-1.5 rounded text-sm"
               >
