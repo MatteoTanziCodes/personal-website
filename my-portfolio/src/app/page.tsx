@@ -3,15 +3,16 @@
 import SideNav from "@components/SideNav";
 import ProjectCard from "@components/homepage/ProjectCard";
 import ResearchCard from "@components/homepage/ResearchCard";
-import { PROJECTS } from "@/data/projects";
 import { RESEARCH } from "@/data/research";
+import { tripYears } from "@/data/trips";
 import AnimatedText from "@/components/AnimatedText";
 import AnimatedWrapper from "@/components/AnimatedWrapper";
 import ThemeClientReady from "@/components/ThemeClientReady";
 import PageWrapper from "@/components/PageWrapper";
+import { useGithubProjects } from "@/lib/useGithubProjects";
 
 export default function HomePage() {
-  const latestProjects = PROJECTS.slice(0, 2);
+  const latestProjects = useGithubProjects(3);
   const latestResearch = RESEARCH.slice(0, 2);
 
   return (
@@ -58,6 +59,7 @@ export default function HomePage() {
                   <div key={i}>
                     <ProjectCard
                       {...project}
+                      delayOrder={i}
                       onClick={() => window.open(project.github, "_blank", "noopener,noreferrer")}
                     />
                   </div>
@@ -94,7 +96,7 @@ export default function HomePage() {
             <AnimatedWrapper>
               <h2 className="text-2xl font-semibold mb-6 text-[var(--fg)]">Trips</h2>
               <div className="flex flex-wrap gap-6 text-lg font-semibold">
-                {["2024", "2023", "2022", "2009"].map((year) => (
+                {tripYears.map((year) => (
                   <a
                     key={year}
                     href={`/trips#year-${year}`}

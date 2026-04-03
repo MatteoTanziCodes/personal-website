@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import TripCard from "@/components/TripCard";
-import { tripData } from "@/data/trips";
+import { tripData, tripYears } from "@/data/trips";
 import BackToTopButton from "@/components/BackToTopButton";
 import ThemeClientReady from "@/components/ThemeClientReady";
 import AnimatedWrapper from "@/components/AnimatedWrapper";
@@ -32,7 +32,7 @@ function scrollToHashIfPresent() {
   }
 
 export default function TripsPage() {
-  const sortedYears = Object.keys(groupedByYear).sort((a, b) => Number(b) - Number(a));
+  const sortedYears = tripYears;
 
   // 🔧 Smooth scroll after hydration (fixes broken anchor navigation)
   useEffect(() => {

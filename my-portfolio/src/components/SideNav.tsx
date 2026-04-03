@@ -57,7 +57,7 @@ export default function SideNav() {
             <a href="/projects" className="hover:text-primary">projects</a>,{" "}
             <a href="/research" className="hover:text-primary">research</a>, and LeetCode.
             <br /><br />
-            In the future, I’d love to become a solutions architect and eventually become an entrepreneur (check out Ambassador Boost and Rolodex in my applications),
+            In the future, I’d love to become a solutions architect and eventually become an entrepreneur (check out my <a href="/projects" className="hover:text-primary">projects</a>),
             learn another language, and pick up the guitar.
           </p>
         </div>

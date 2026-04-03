@@ -45,16 +45,18 @@ export default function ProjectCard({
         </div>
         <h3 className="text-lg font-semibold mt-1 text-[var(--fg)]">{title}</h3>
         <p className="text-sm text-[var(--muted)] mt-1">{description}</p>
-        <div className="flex flex-wrap gap-2 mt-3">
-          {builtWith.map((tag) => (
-            <span
-              key={tag}
-              className="text-xs bg-[var(--card)] text-[var(--fg)] px-2 py-0.5 rounded border border-[var(--border)]"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+        {builtWith.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {builtWith.map((tag) => (
+              <span
+                key={tag}
+                className="text-xs bg-[var(--card)] text-[var(--fg)] px-2 py-0.5 rounded border border-[var(--border)]"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </StaggerReveal>
   );

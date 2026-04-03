@@ -3,29 +3,23 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useEffect, useMemo, useState } from "react";
 import AnimatedWrapper from "@/components/AnimatedWrapper";
+import { useIsClient } from "@/lib/useIsClient";
 
 export default function Work() {
   const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
+  const currentYear = new Date().getFullYear();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const jobs = [
+    { title: "Lab Developer @ Robarts Institute", start: 2021, end: 2022 },
+    { title: "Software Developer Intern @ LobbyIQ", start: 2022, end: 2023 },
+    { title: "DevOps Engineer @ BMO", start: 2022, end: 2023 },
+    { title: "Software Engineer @ BMO", start: 2023, end: currentYear },
+  ];
 
-  const jobs = useMemo(
-    () => [
-      { title: "Lab Developer @ Robarts Institute", start: 2021, end: 2022 },
-      { title: "Software Developer Intern @ LobbyIQ", start: 2022, end: 2023 },
-      { title: "DevOps Engineer @ BMO", start: 2022, end: 2023 },
-      { title: "Software Engineer @ BMO", start: 2023, end: 2025 },
-    ],
-    []
-  );
-
-  const minYear = 2020;
-  const maxYear = 2025;
+  const minYear = Math.min(...jobs.map((job) => job.start));
+  const maxYear = Math.max(...jobs.map((job) => job.end));
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
 
   const isDark = theme === "dark";
@@ -78,7 +72,7 @@ export default function Work() {
                 ))}
                 {jobs.map((job, idx) => {
                   const startCol = job.start - minYear + 1;
-                  const endCol = job.end - minYear + 1;
+                  const endCol = job.end - minYear + 2;
                   return (
                     <div
                       key={idx}
