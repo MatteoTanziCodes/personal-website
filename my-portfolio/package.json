@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@iconify/react": "^5.2.1",
+    "@vercel/analytics": "^2.0.1",
     "classnames": "^2.5.1",
     "framer-motion": "^12.7.3",
     "lucide-react": "^0.488.0",
