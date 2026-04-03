@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Navbar from "@components/Navbar";
 import { Providers } from "@components/Providers"; 
 import Footer from "@components/Footer";
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://matteo-tanzi.ca"),
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </main>
           <Footer />
         </Providers>
+        <Analytics />
       </body>    
     </html>
   );
