@@ -1,14 +1,16 @@
 "use client";
 
 import { GitHubIcon } from "@/components/icons";
-import { PROJECTS } from "@/data/projects";
 import ThemeClientReady from "@/components/ThemeClientReady";
 import StaggerReveal from "@/components/StaggerReveal";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import PageWrapper from "@/components/PageWrapper";
+import { useGithubProjects } from "@/lib/useGithubProjects";
 
 export default function ProjectsPage() {
+  const projects = useGithubProjects(5);
+
   return (
     <ThemeClientReady>
       <PageWrapper>
@@ -22,7 +24,7 @@ export default function ProjectsPage() {
         </motion.h1>
 
         <StaggerReveal className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.map((proj, idx) => (
+          {projects.map((proj, idx) => (
             <motion.div
               key={idx}
               variants={{
@@ -47,16 +49,18 @@ export default function ProjectsPage() {
               <h3 className="text-lg font-semibold text-[var(--fg)] mb-1">{proj.title}</h3>
               <p className="text-sm text-[var(--muted)]">{proj.description}</p>
 
-              <div className="flex flex-wrap gap-2 mt-3">
-                {proj.builtWith.map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-2 py-1 text-xs rounded-md text-[var(--fg)] bg-[var(--card)] border border-[var(--border)]"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
+              {proj.builtWith.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {proj.builtWith.map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-2 py-1 text-xs rounded-md text-[var(--fg)] bg-[var(--card)] border border-[var(--border)]"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              )}
             </motion.div>
           ))}
         </StaggerReveal>

@@ -5,7 +5,7 @@ export interface TripEntry {
     location: string;
   }
   
-  export const tripData: TripEntry[] = [
+export const tripData: TripEntry[] = [
     // 2024
     { year: 2024, image: "/images/trips/IMG_8380.jpg", location: "London" },
     { year: 2024, image: "/images/trips/IMG_8381.jpg", location: "London" },
@@ -220,4 +220,8 @@ export interface TripEntry {
     { year: 2023, image: "/images/trips/IMG_1148.heic", location: "Portugal" },
     { year: 2023, image: "/images/trips/IMG_1149.heic", location: "Portugal" },
   ];
+
+export const tripYears = Array.from(new Set(tripData.map((trip) => trip.year))).sort(
+  (a, b) => b - a
+);
   

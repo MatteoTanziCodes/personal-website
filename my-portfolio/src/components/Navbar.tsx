@@ -3,16 +3,15 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { GitHubIcon, MoonIcon, SunIcon } from "@/components/icons";
+import { useIsClient } from "@/lib/useIsClient";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
 
-  useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
   const links = [
