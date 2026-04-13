@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+<>";
 
@@ -26,6 +26,9 @@ export function MatrixTransitionText({
     const [display, setDisplay] = useState("");
     const prevTextRef = useRef("");
     const animationIdRef = useRef(0);
+    const notifyDone = useEffectEvent(() => {
+      onDone?.();
+    });
   
     useEffect(() => {
       const animationId = ++animationIdRef.current;
@@ -81,7 +84,7 @@ export function MatrixTransitionText({
   
         if (animationId === animationIdRef.current) {
           prevTextRef.current = next;
-          onDone?.(); // ✅ notify SideNav
+          notifyDone();
         }
       };
   
@@ -92,4 +95,3 @@ export function MatrixTransitionText({
   
     return <span style={{ color: "var(--fg)", whiteSpace: "pre" }}>{display}</span>;
   }
-

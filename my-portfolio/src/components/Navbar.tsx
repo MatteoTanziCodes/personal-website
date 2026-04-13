@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { GitHubIcon, MoonIcon, SunIcon } from "@/components/icons";
 import { useIsClient } from "@/lib/useIsClient";
+import { RESUME_PDF_PATH } from "@/lib/site";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
@@ -48,7 +49,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4 flex-wrap">
             <a
-              href="/resume-file"
+              href={RESUME_PDF_PATH}
               target="_blank"
               className="link-hover-box text-[var(--fg)] hover:text-primary transition-colors"
             >
