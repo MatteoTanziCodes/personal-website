@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { MatrixTransitionText } from "./MatrixTransitionText";
 import AnimatedSlideInWrapper from "./AnimatedSlideInWrapper";
+import { RESUME_PDF_PATH } from "@/lib/site";
 
 const roles = [
   "Tae",
@@ -84,7 +85,7 @@ export default function SideNav() {
                 </Link>
               </li>
               <li>
-                <Link href="/resume-file" className="hover:text-primary flex items-center gap-2" target="_blank">
+                <Link href={RESUME_PDF_PATH} className="hover:text-primary flex items-center gap-2" target="_blank">
                   <BookIcon /> Resume
                 </Link>
               </li>
