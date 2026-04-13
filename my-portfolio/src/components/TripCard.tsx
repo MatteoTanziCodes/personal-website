@@ -12,17 +12,68 @@ interface TripCardProps {
 const MOBILE_MEDIA_QUERY = "(hover: none) and (pointer: coarse)";
 const IN_VIEW_THRESHOLD = 0.6;
 const MAX_MOBILE_TILT = 12;
+const DEFAULT_TILT = { rotateX: 0, rotateY: 0 };
+
+type MotionPermissionState = "unknown" | "granted" | "denied";
+
+type IOSDeviceOrientationEvent = typeof DeviceOrientationEvent & {
+  requestPermission?: () => Promise<"granted" | "denied">;
+};
+
+let motionPermissionState: MotionPermissionState = "unknown";
+let motionPermissionRequest: Promise<boolean> | null = null;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
+}
+
+async function ensureMotionPermission() {
+  if (typeof window === "undefined" || typeof DeviceOrientationEvent === "undefined") {
+    motionPermissionState = "denied";
+    return false;
+  }
+
+  if (motionPermissionState === "granted") {
+    return true;
+  }
+
+  if (motionPermissionState === "denied") {
+    return false;
+  }
+
+  const deviceOrientation = DeviceOrientationEvent as IOSDeviceOrientationEvent;
+
+  if (typeof deviceOrientation.requestPermission !== "function") {
+    motionPermissionState = "granted";
+    return true;
+  }
+
+  if (!motionPermissionRequest) {
+    motionPermissionRequest = deviceOrientation
+      .requestPermission()
+      .then((result) => {
+        motionPermissionState = result === "granted" ? "granted" : "denied";
+        return motionPermissionState === "granted";
+      })
+      .catch(() => {
+        motionPermissionState = "denied";
+        return false;
+      })
+      .finally(() => {
+        motionPermissionRequest = null;
+      });
+  }
+
+  return motionPermissionRequest;
 }
 
 export default function TripCard({ image, location }: TripCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isInView, setIsInView] = useState(false);
+  const [isMotionEnabled, setIsMotionEnabled] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const [transform, setTransform] = useState({ rotateX: 0, rotateY: 0 });
+  const [transform, setTransform] = useState(DEFAULT_TILT);
   const isActive = isMobile ? isInView : hovered;
 
   useEffect(() => {
@@ -62,6 +113,35 @@ export default function TripCard({ image, location }: TripCardProps) {
   }, []);
 
   useEffect(() => {
+    if (!isMobile || typeof window === "undefined") return;
+
+    let cancelled = false;
+
+    const activateMotion = async () => {
+      const granted = await ensureMotionPermission();
+      if (!cancelled) {
+        setIsMotionEnabled(granted);
+      }
+    };
+
+    void activateMotion();
+
+    // iOS Safari requires a user gesture before motion data is available.
+    const handleFirstGesture = () => {
+      void activateMotion();
+    };
+
+    window.addEventListener("touchstart", handleFirstGesture, { passive: true });
+    window.addEventListener("pointerdown", handleFirstGesture, { passive: true });
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("touchstart", handleFirstGesture);
+      window.removeEventListener("pointerdown", handleFirstGesture);
+    };
+  }, [isMobile]);
+
+  useEffect(() => {
     if (isMobile) return;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -77,8 +157,8 @@ export default function TripCard({ image, location }: TripCardProps) {
       setTransform({ rotateX, rotateY });
     };
 
-    const handleMouseLeave = () => {
-      setTransform({ rotateX: 0, rotateY: 0 });
+      const handleMouseLeave = () => {
+      setTransform(DEFAULT_TILT);
     };
 
     const node = cardRef.current;
@@ -95,13 +175,13 @@ export default function TripCard({ image, location }: TripCardProps) {
   }, [isMobile]);
 
   useEffect(() => {
-    if (!isMobile || !isInView || typeof window === "undefined") return;
+    if (!isMobile || !isInView || !isMotionEnabled || typeof window === "undefined") return;
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
       if (event.beta == null || event.gamma == null) return;
 
-      const rotateX = clamp(-(event.beta - 45) / 4, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
-      const rotateY = clamp(event.gamma / 3, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
+      const rotateX = clamp(-event.beta / 6, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
+      const rotateY = clamp(event.gamma / 4, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
 
       setTransform({ rotateX, rotateY });
     };
@@ -110,9 +190,9 @@ export default function TripCard({ image, location }: TripCardProps) {
 
     return () => {
       window.removeEventListener("deviceorientation", handleOrientation, true);
-      setTransform({ rotateX: 0, rotateY: 0 });
+      setTransform(DEFAULT_TILT);
     };
-  }, [isInView, isMobile]);
+  }, [isInView, isMobile, isMotionEnabled]);
 
   return (
     <div
