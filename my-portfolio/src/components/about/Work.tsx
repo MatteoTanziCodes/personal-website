@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import AnimatedWrapper from "@/components/AnimatedWrapper";
 import { useIsClient } from "@/lib/useIsClient";
+import { RESUME_PDF_PATH } from "@/lib/site";
 
 export default function Work() {
   const { theme } = useTheme();
@@ -40,7 +41,7 @@ export default function Work() {
         <div className="w-full max-w-3xl space-y-8">
           <h2 className="text-4xl font-bold text-[var(--fg)] mb-4">Work</h2>
           <Link
-            href="/resume-file"
+            href={RESUME_PDF_PATH}
             target="_blank"
             className="self-start mb-6 inline-flex items-center gap-1 px-4 py-2 border border-[color:var(--fg)] text-[color:var(--fg)] rounded hover:bg-primary/10 text-sm transition-colors"
           >

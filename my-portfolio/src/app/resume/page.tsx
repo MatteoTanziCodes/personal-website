@@ -2,6 +2,7 @@
 import SectionHeader from '@components/SectionHeader';
 import ThemeClientReady from "@/components/ThemeClientReady";
 import PageWrapper from '@/components/PageWrapper';
+import { RESUME_PDF_PATH } from "@/lib/site";
 
 export default function ResumePage() {
   return (
@@ -10,7 +11,7 @@ export default function ResumePage() {
     <div>
       <SectionHeader title="Resume" />
       <a
-        href="/resume-file"
+        href={RESUME_PDF_PATH}
         className="text-primary underline"
         target="_blank"
         rel="noopener noreferrer"

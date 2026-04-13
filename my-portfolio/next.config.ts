@@ -3,7 +3,11 @@ import type { NextConfig } from 'next';
 import type { Configuration as WebpackConfig } from 'webpack';
 
 const nextConfig: NextConfig = {
+  output: "export",
   reactStrictMode: true,
+  images: {
+    unoptimized: true,
+  },
   webpack: (config: WebpackConfig) => {
     // Ensure `resolve` exists
     config.resolve ??= {};

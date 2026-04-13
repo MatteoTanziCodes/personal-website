@@ -1,6 +1,7 @@
 "use client";
 
 import AnimatedWrapper from "@/components/AnimatedWrapper";
+import { RESUME_PDF_PATH } from "@/lib/site";
 
 export default function AboutMe() {
   return (
@@ -22,7 +23,7 @@ export default function AboutMe() {
                 Toronto, ON
               </span>
               <a
-                href="/resume-file"
+                href={RESUME_PDF_PATH}
                 target="_blank"
                 className="border border-[color:var(--fg)] text-[color:var(--fg)] hover:bg-[rgba(99,102,241,0.08)] px-4 py-1.5 rounded text-sm"
               >
