@@ -69,6 +69,8 @@ async function ensureMotionPermission() {
 
 export default function TripCard({ image, location }: TripCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const mobileNeutralTiltRef = useRef<{ beta: number; gamma: number } | null>(null);
+  const mobileTiltFrameRef = useRef<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [isMotionEnabled, setIsMotionEnabled] = useState(false);
@@ -175,21 +177,46 @@ export default function TripCard({ image, location }: TripCardProps) {
   }, [isMobile]);
 
   useEffect(() => {
+    if (!isMobile || !isInView) {
+      mobileNeutralTiltRef.current = null;
+    }
+  }, [isInView, isMobile]);
+
+  useEffect(() => {
     if (!isMobile || !isInView || !isMotionEnabled || typeof window === "undefined") return;
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
       if (event.beta == null || event.gamma == null) return;
 
-      const rotateX = clamp(-event.beta / 6, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
-      const rotateY = clamp(event.gamma / 4, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
+      const neutralTilt =
+        mobileNeutralTiltRef.current ??
+        (() => {
+          const initialTilt = { beta: event.beta ?? 0, gamma: event.gamma ?? 0 };
+          mobileNeutralTiltRef.current = initialTilt;
+          return initialTilt;
+        })();
 
-      setTransform({ rotateX, rotateY });
+      const rotateX = clamp(-(event.beta - neutralTilt.beta) * 0.6, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
+      const rotateY = clamp((event.gamma - neutralTilt.gamma) * 0.9, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
+
+      if (mobileTiltFrameRef.current !== null) {
+        window.cancelAnimationFrame(mobileTiltFrameRef.current);
+      }
+
+      mobileTiltFrameRef.current = window.requestAnimationFrame(() => {
+        setTransform({ rotateX, rotateY });
+      });
     };
 
     window.addEventListener("deviceorientation", handleOrientation, true);
 
     return () => {
+      if (mobileTiltFrameRef.current !== null) {
+        window.cancelAnimationFrame(mobileTiltFrameRef.current);
+        mobileTiltFrameRef.current = null;
+      }
       window.removeEventListener("deviceorientation", handleOrientation, true);
+      mobileNeutralTiltRef.current = null;
       setTransform(DEFAULT_TILT);
     };
   }, [isInView, isMobile, isMotionEnabled]);
@@ -209,7 +236,8 @@ export default function TripCard({ image, location }: TripCardProps) {
       }}
       style={{
         transform: `perspective(1000px) rotateX(${transform.rotateX}deg) rotateY(${transform.rotateY}deg)`,
-        transition: isMobile ? "transform 0.2s ease" : hovered ? "transform 0.1s ease" : "transform 0.4s ease",
+        transition: isMobile ? "transform 0.08s linear" : hovered ? "transform 0.1s ease" : "transform 0.4s ease",
+        willChange: "transform",
       }}
       className={cn(
         "relative overflow-hidden rounded-xl transition-all duration-300",
