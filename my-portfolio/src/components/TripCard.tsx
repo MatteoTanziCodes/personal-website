@@ -16,7 +16,7 @@ const DEFAULT_TILT = { rotateX: 0, rotateY: 0 };
 
 type MotionPermissionState = "unknown" | "granted" | "denied";
 
-type IOSDeviceOrientationEvent = typeof DeviceOrientationEvent & {
+type IOSMotionPermissionEvent = {
   requestPermission?: () => Promise<"granted" | "denied">;
 };
 
@@ -27,8 +27,29 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
+function getPermissionRequester() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const deviceOrientation = globalThis.DeviceOrientationEvent as IOSMotionPermissionEvent | undefined;
+  if (typeof deviceOrientation?.requestPermission === "function") {
+    return deviceOrientation.requestPermission.bind(deviceOrientation);
+  }
+
+  const deviceMotion = globalThis.DeviceMotionEvent as IOSMotionPermissionEvent | undefined;
+  if (typeof deviceMotion?.requestPermission === "function") {
+    return deviceMotion.requestPermission.bind(deviceMotion);
+  }
+
+  return null;
+}
+
 async function ensureMotionPermission() {
-  if (typeof window === "undefined" || typeof DeviceOrientationEvent === "undefined") {
+  if (
+    typeof window === "undefined" ||
+    (typeof DeviceOrientationEvent === "undefined" && typeof DeviceMotionEvent === "undefined")
+  ) {
     motionPermissionState = "denied";
     return false;
   }
@@ -41,16 +62,14 @@ async function ensureMotionPermission() {
     return false;
   }
 
-  const deviceOrientation = DeviceOrientationEvent as IOSDeviceOrientationEvent;
-
-  if (typeof deviceOrientation.requestPermission !== "function") {
+  const requestPermission = getPermissionRequester();
+  if (!requestPermission) {
     motionPermissionState = "granted";
     return true;
   }
 
   if (!motionPermissionRequest) {
-    motionPermissionRequest = deviceOrientation
-      .requestPermission()
+    motionPermissionRequest = requestPermission()
       .then((result) => {
         motionPermissionState = result === "granted" ? "granted" : "denied";
         return motionPermissionState === "granted";
@@ -67,9 +86,15 @@ async function ensureMotionPermission() {
   return motionPermissionRequest;
 }
 
+function updateMotionPermissionState(granted: boolean) {
+  motionPermissionState = granted ? "granted" : "denied";
+  return granted;
+}
+
 export default function TripCard({ image, location }: TripCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const mobileNeutralTiltRef = useRef<{ beta: number; gamma: number } | null>(null);
+  const mobileGravityBaselineRef = useRef<{ x: number; y: number } | null>(null);
   const mobileTiltFrameRef = useRef<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isInView, setIsInView] = useState(false);
@@ -119,6 +144,12 @@ export default function TripCard({ image, location }: TripCardProps) {
 
     let cancelled = false;
 
+    const syncMotionPermission = (granted: boolean) => {
+      if (!cancelled) {
+        setIsMotionEnabled(updateMotionPermissionState(granted));
+      }
+    };
+
     const activateMotion = async () => {
       const granted = await ensureMotionPermission();
       if (!cancelled) {
@@ -128,18 +159,33 @@ export default function TripCard({ image, location }: TripCardProps) {
 
     void activateMotion();
 
-    // iOS Safari requires a user gesture before motion data is available.
+    // iOS Safari requires the permission request to happen inside a real gesture.
     const handleFirstGesture = () => {
-      void activateMotion();
+      const requestPermission = getPermissionRequester();
+
+      if (!requestPermission) {
+        syncMotionPermission(true);
+        return;
+      }
+
+      requestPermission()
+        .then((result) => {
+          syncMotionPermission(result === "granted");
+        })
+        .catch(() => {
+          syncMotionPermission(false);
+        });
     };
 
-    window.addEventListener("touchstart", handleFirstGesture, { passive: true });
-    window.addEventListener("pointerdown", handleFirstGesture, { passive: true });
+    window.addEventListener("touchend", handleFirstGesture, { once: true });
+    window.addEventListener("click", handleFirstGesture, { once: true });
+    window.addEventListener("pointerup", handleFirstGesture, { once: true });
 
     return () => {
       cancelled = true;
-      window.removeEventListener("touchstart", handleFirstGesture);
-      window.removeEventListener("pointerdown", handleFirstGesture);
+      window.removeEventListener("touchend", handleFirstGesture);
+      window.removeEventListener("click", handleFirstGesture);
+      window.removeEventListener("pointerup", handleFirstGesture);
     };
   }, [isMobile]);
 
@@ -179,11 +225,22 @@ export default function TripCard({ image, location }: TripCardProps) {
   useEffect(() => {
     if (!isMobile || !isInView) {
       mobileNeutralTiltRef.current = null;
+      mobileGravityBaselineRef.current = null;
     }
   }, [isInView, isMobile]);
 
   useEffect(() => {
     if (!isMobile || !isInView || !isMotionEnabled || typeof window === "undefined") return;
+
+    const queueTransform = (rotateX: number, rotateY: number) => {
+      if (mobileTiltFrameRef.current !== null) {
+        window.cancelAnimationFrame(mobileTiltFrameRef.current);
+      }
+
+      mobileTiltFrameRef.current = window.requestAnimationFrame(() => {
+        setTransform({ rotateX, rotateY });
+      });
+    };
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
       if (event.beta == null || event.gamma == null) return;
@@ -199,16 +256,29 @@ export default function TripCard({ image, location }: TripCardProps) {
       const rotateX = clamp(-(event.beta - neutralTilt.beta) * 0.6, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
       const rotateY = clamp((event.gamma - neutralTilt.gamma) * 0.9, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
 
-      if (mobileTiltFrameRef.current !== null) {
-        window.cancelAnimationFrame(mobileTiltFrameRef.current);
-      }
+      queueTransform(rotateX, rotateY);
+    };
 
-      mobileTiltFrameRef.current = window.requestAnimationFrame(() => {
-        setTransform({ rotateX, rotateY });
-      });
+    const handleMotion = (event: DeviceMotionEvent) => {
+      const gravity = event.accelerationIncludingGravity;
+      if (!gravity || gravity.x == null || gravity.y == null) return;
+
+      const baseline =
+        mobileGravityBaselineRef.current ??
+        (() => {
+          const initialGravity = { x: gravity.x ?? 0, y: gravity.y ?? 0 };
+          mobileGravityBaselineRef.current = initialGravity;
+          return initialGravity;
+        })();
+
+      const rotateX = clamp((gravity.y - baseline.y) * 1.8, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
+      const rotateY = clamp((gravity.x - baseline.x) * -1.8, -MAX_MOBILE_TILT, MAX_MOBILE_TILT);
+
+      queueTransform(rotateX, rotateY);
     };
 
     window.addEventListener("deviceorientation", handleOrientation, true);
+    window.addEventListener("devicemotion", handleMotion, true);
 
     return () => {
       if (mobileTiltFrameRef.current !== null) {
@@ -216,7 +286,9 @@ export default function TripCard({ image, location }: TripCardProps) {
         mobileTiltFrameRef.current = null;
       }
       window.removeEventListener("deviceorientation", handleOrientation, true);
+      window.removeEventListener("devicemotion", handleMotion, true);
       mobileNeutralTiltRef.current = null;
+      mobileGravityBaselineRef.current = null;
       setTransform(DEFAULT_TILT);
     };
   }, [isInView, isMobile, isMotionEnabled]);
