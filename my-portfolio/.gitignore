@@ -40,5 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# generated at build time by scripts/fetch-newsletters.mjs
+# generated at build time by scripts/fetch-newsletters.mjs and scripts/fetch-papers.mjs
 /public/newsletters.json
+/public/papers.json

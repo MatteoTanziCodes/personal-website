@@ -4,7 +4,7 @@
 //
 // - hnQuery:    search terms for Hacker News stories (https://hn.algolia.com)
 // - devtoTags:  DEV.to tags, e.g. https://dev.to/t/aws -> "aws" (one request per tag)
-// - paperQuery: search terms for new computer-science papers on arXiv (via OpenAlex);
+// - paperQuery: search terms for new computer-science papers on arXiv (fetched at build time);
 //               topics with a paperQuery also appear under "Research papers"
 // - classics:   hand-picked evergreen reads; one rotates in each day and never runs out
 // - articleLimit: override ARTICLES_PER_TOPIC for this topic

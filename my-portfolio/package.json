@@ -4,13 +4,15 @@
   "private": true,
   "scripts": {
     "fetch:newsletters": "node scripts/fetch-newsletters.mjs",
-    "predev": "node scripts/fetch-newsletters.mjs",
+    "fetch:papers": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fetch-papers.mjs",
+    "fetch:content": "npm run fetch:newsletters && npm run fetch:papers",
+    "predev": "npm run fetch:content",
     "dev": "next dev --webpack",
     "dev:turbopack": "next dev --turbopack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
-    "prebuild": "node scripts/fetch-newsletters.mjs"
+    "prebuild": "npm run fetch:content"
   },
   "dependencies": {
     "@iconify/react": "^6.0.4",

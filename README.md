@@ -29,25 +29,31 @@ The site covers my projects, research, work history, and a travel archive, plus 
 
 ## Daily learning feed
 
-The site is a static export with no backend, so `/learning` fetches everything in the visitor's browser from public APIs that allow cross-origin requests:
+The site is a static export with no backend, so most of `/learning` is fetched in the visitor's browser from public APIs that allow cross-origin requests:
 
 | Source | Used for |
 | --- | --- |
 | [Hacker News Search (Algolia)](https://hn.algolia.com/api) | Recent stories per topic above a points threshold |
 | [DEV.to API](https://developers.forem.com/api) | Top articles per tag, e.g. `product`, `productmanagement`, `leadership` (requests are spaced out to stay under DEV's rate limit) |
 | [Hugging Face Daily Papers](https://huggingface.co/papers) | Trending AI/ML papers, ranked by community upvotes |
-| [OpenAlex](https://docs.openalex.org/) | New arXiv computer-science papers per topic (`paperQuery`) from the last 14 days |
 | [Wikimedia feed API](https://api.wikimedia.org/wiki/Feed_API) | Featured article, "on this day", "did you know" |
 
-**The live sources above update themselves every day; nothing needs to be rebuilt or redeployed for them.** Each visitor's browser fetches the feed live and caches it in `localStorage` until their local midnight, then fetches a new one. A feed with a failed source isn't cached, so it retries on the next visit, and editing the topic config invalidates any cached feed. If a DEV.to tag has no top posts that week, its newest posts fill the gap. arXiv's own API doesn't allow browser requests, which is why arXiv papers come through OpenAlex. Reading progress (reads, daily goal, streak) is stored per browser and never leaves the visitor's device. Logic lives in `src/lib/learning.ts`, `src/lib/useLearningFeed.ts`, and `src/lib/useReadingLog.ts`.
+**These live sources update themselves every day; nothing needs to be rebuilt or redeployed for them.** Each visitor's browser fetches the feed live and caches it in `localStorage` until their local midnight, then fetches a new one. A feed with a failed source isn't cached, so it retries on the next visit, and editing the topic config invalidates any cached feed. If a DEV.to tag has no top posts that week, its newest posts fill the gap. Reading progress (reads, daily goal, streak) is stored per browser and never leaves the visitor's device. Logic lives in `src/lib/learning.ts`, `src/lib/useLearningFeed.ts`, and `src/lib/useReadingLog.ts`.
 
-### Product newsletters (refreshed by a daily rebuild)
+### Newsletters and arXiv papers (refreshed by a daily rebuild)
 
-Product newsletters (Lenny's Newsletter, SVPG, First Round Review, The Beautiful Mess, The Product Compass, Product Growth, Elena's Growth Scoop, The Looking Glass) publish RSS feeds that block browser requests, so they're fetched at **build time** instead:
+Two sources can't be fetched from the browser, so they're fetched at **build time** instead and served as static JSON:
 
-1. `scripts/fetch-newsletters.mjs` runs automatically before `npm run dev` and `npm run build` (or on its own with `npm run fetch:newsletters`). It reads the feed list in `src/data/newsletters.json`, keeps the newest posts from each, and writes `public/newsletters.json` (gitignored). It never fails the build; if every feed is down it keeps the previous file.
-2. `/learning` and the homepage card load `/newsletters.json` from the site itself.
-3. `.github/workflows/daily-rebuild.yml` triggers a Cloudflare Pages rebuild every day at 10:00 UTC, so the posts stay current.
+| Source | Script | Output | Why build time |
+| --- | --- | --- | --- |
+| Product newsletters (Lenny's Newsletter, SVPG, First Round Review, The Beautiful Mess, The Product Compass, Product Growth, Elena's Growth Scoop, The Looking Glass), listed in `src/data/newsletters.json` | `scripts/fetch-newsletters.mjs` | `public/newsletters.json` | RSS feeds block browser requests |
+| [arXiv API](https://info.arxiv.org/help/api/): newest computer-science papers per topic (`paperQuery` in `src/data/learning.ts`) from the last 14 days | `scripts/fetch-papers.mjs` | `public/papers.json` | arXiv blocks browser requests, and OpenAlex (the browser-friendly alternative) rate-limits anonymous searches |
+
+1. Both scripts run automatically before `npm run dev` and `npm run build` (or together with `npm run fetch:content`). Outputs are gitignored. Neither script can fail the build: anything that can't be fetched keeps its previous output.
+2. `/learning` and the homepage card load the JSON files from the site itself.
+3. `.github/workflows/daily-rebuild.yml` triggers a Cloudflare Pages rebuild every day at 10:00 UTC, so posts and papers stay current.
+
+`fetch-papers.mjs` imports the typed topic config directly, which needs Node 22.18 or later; `my-portfolio/.node-version` pins Cloudflare's build to Node 24.
 
 **One-time setup for the daily rebuild:**
 
@@ -65,7 +71,7 @@ To add or remove a newsletter, edit `src/data/newsletters.json`. Any RSS or Atom
 personal-website/
 ├── .github/workflows/          # daily-rebuild.yml (refreshes newsletter posts)
 └── my-portfolio/               # the Next.js app
-    ├── scripts/                # fetch-newsletters.mjs (runs before dev/build)
+    ├── scripts/                # fetch-newsletters.mjs, fetch-papers.mjs (run before dev/build)
     ├── public/
     │   ├── assets/             # favicon, OG image
     │   ├── fonts/              # Satoshi
@@ -93,7 +99,7 @@ Most content lives in plain TypeScript files, so no code changes are needed to u
 
 ## Development
 
-Requires Node.js 20.9 or later (developed on Node 24).
+Requires Node.js 22.18 or later (developed on Node 24; `.node-version` pins 24).
 
 ```bash
 git clone https://github.com/MatteoTanziCodes/personal-website.git
@@ -104,10 +110,10 @@ npm run dev        # http://localhost:3000
 
 | Script | Purpose |
 | --- | --- |
-| `npm run dev` | Fetch newsletters, then start the dev server (webpack) |
+| `npm run dev` | Fetch newsletters and papers, then start the dev server (webpack) |
 | `npm run dev:turbopack` | Dev server (Turbopack) |
-| `npm run build` | Fetch newsletters, then static export to `out/` |
-| `npm run fetch:newsletters` | Refresh `public/newsletters.json` on its own |
+| `npm run build` | Fetch newsletters and papers, then static export to `out/` |
+| `npm run fetch:content` | Refresh `public/newsletters.json` and `public/papers.json` (or one at a time with `fetch:newsletters` / `fetch:papers`) |
 | `npm run start` | Serve a production build |
 | `npm run lint` | ESLint (Next.js core-web-vitals + TypeScript rules) |
 
@@ -120,7 +126,7 @@ Cloudflare Pages build settings:
 | Setting | Value |
 | --- | --- |
 | Root directory | `my-portfolio` |
-| Build command | `npm run build` (must be the npm script, not `next build`, so the newsletter fetch runs first) |
+| Build command | `npm run build` (must be the npm script, not `next build`, so the newsletter and paper fetches run first) |
 | Build output directory | `out` |
 
 For visitor analytics, turn on Cloudflare Web Analytics for the Pages project (**Metrics → Web Analytics**). It needs no code changes.
