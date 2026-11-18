@@ -12,11 +12,12 @@ export default function Work() {
   const mounted = useIsClient();
   const currentYear = new Date().getFullYear();
 
-  const jobs = [
+  const jobs: { title: string; start: number; end: number; current?: boolean }[] = [
     { title: "Lab Developer @ Robarts Institute", start: 2021, end: 2022 },
     { title: "Software Developer Intern @ LobbyIQ", start: 2022, end: 2023 },
     { title: "DevOps Engineer @ BMO", start: 2022, end: 2023 },
-    { title: "Software Engineer @ BMO", start: 2023, end: currentYear },
+    { title: "Software Engineer @ BMO", start: 2023, end: 2026 },
+    { title: "Senior Product Engineer @ Endo", start: 2026, end: currentYear, current: true },
   ];
 
   const minYear = Math.min(...jobs.map((job) => job.start));
@@ -100,7 +101,7 @@ export default function Work() {
               >
                 <p className="font-medium">{job.title}</p>
                 <p className="text-sm text-[var(--muted)] mt-1">
-                  {job.start} – {job.end}
+                  {job.start} – {job.current ? "Present" : job.end}
                 </p>
               </div>
             ))}

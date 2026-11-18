@@ -2,7 +2,7 @@ export const PROJECTS = [
   {
     year: 2025,
     title: "Ambassador Boost",
-    description: "Micro-influencer marketing SaaS platform. (Currently in development)",
+    description: "Micro-influencer marketing SaaS platform.",
     builtWith: ["Next.js", "TypeScript", "AWS", "Kafka", "Python"],
     github: "https://github.com/MatteoTanziCodes/AmbassadorBoost",
   },

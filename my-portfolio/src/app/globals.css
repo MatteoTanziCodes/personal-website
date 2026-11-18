@@ -3,6 +3,17 @@
 @import "../styles/fonts.css";
 @import "../styles/scrollbar.css";
 
+/* Tailwind v4 theme: map utility names (text-primary, bg-primary/10, text-muted...)
+   onto the CSS variables in styles/theme.css so they follow light/dark mode. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-secondary: #60A5FA;
+  --color-muted: var(--muted);
+  --font-sans: "Satoshi", sans-serif;
+}
+
 /* ====== GLOBAL STYLES ====== */
 html {
   scroll-behavior: smooth;

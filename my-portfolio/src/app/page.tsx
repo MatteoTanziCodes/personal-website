@@ -3,6 +3,7 @@
 import SideNav from "@components/SideNav";
 import ProjectCard from "@components/homepage/ProjectCard";
 import ResearchCard from "@components/homepage/ResearchCard";
+import TodayLearningCard from "@components/homepage/TodayLearningCard";
 import { RESEARCH } from "@/data/research";
 import { tripYears } from "@/data/trips";
 import AnimatedText from "@/components/AnimatedText";
@@ -26,8 +27,14 @@ export default function HomePage() {
           <section id="about" className="mb-20">
             <AnimatedText text="Hey, it's Matteo :)" />
             <p className="text-lg sm:text-xl leading-relaxed text-right text-[var(--muted)]">
-              I&apos;m a Full-stack Developer focused on cloud-native solutions, real-time monitoring systems, and secure internal platforms using AWS.
-              Currently working at BMO and researching AI and Computer Vision for real-world applications.
+              I&apos;m a Senior Product Engineer at{" "}
+              <a href="https://www.endodeals.com" target="_blank" rel="noopener noreferrer" className="text-[var(--fg)] hover:text-primary">
+                Endo
+              </a>
+              , building the software behind modern sports agencies. Before that, I spent four years at BMO
+              building cloud-native solutions, real-time monitoring systems, and secure internal platforms on AWS.
+              What excites me most is the product side: understanding users, deciding what to build and why,
+              and shipping it. I&apos;m working toward becoming a Head of Product.
             </p>
           </section>
 
@@ -38,6 +45,17 @@ export default function HomePage() {
                 <a href="/about#contact" className="border border-[color:var(--fg)] text-[color:var(--fg)] hover:bg-[rgba(99,102,241,0.08)] px-4 py-2 rounded">Contact Me</a>
                 <a href={RESUME_PDF_PATH} target="_blank" className="link-hover-box hover:text-primary transition-colors text-[color:var(--fg)]">View Resume</a>
               </div>
+            </AnimatedWrapper>
+          </section>
+
+          <section id="learning" className="mb-10 text-left">
+            <AnimatedWrapper>
+              <h2 className="text-2xl font-semibold mb-4 text-[var(--fg)]">
+                <a href="/learning" className="hover:text-primary transition-colors cursor-pointer">
+                  Today&apos;s Learning
+                </a>
+              </h2>
+              <TodayLearningCard />
             </AnimatedWrapper>
           </section>
 

@@ -8,6 +8,7 @@ import {
   GlobeIcon,
 } from "@/components/icons";
 import Link from "next/link";
+import { Lightbulb as LightbulbIcon } from "lucide-react";
 import { useState } from "react";
 import { MatrixTransitionText } from "./MatrixTransitionText";
 import AnimatedSlideInWrapper from "./AnimatedSlideInWrapper";
@@ -16,9 +17,10 @@ import { RESUME_PDF_PATH } from "@/lib/site";
 const roles = [
   "Tae",
   "Matteo Tanzi",
+  "Product Engineer",
+  "Future Head of Product",
   "Full-stack Dev",
   "AWS Builder",
-  "AI Researcher",
   "Creative Thinker"
 ];
 
@@ -54,11 +56,11 @@ export default function SideNav() {
             I enjoy weight lifting, travelling, basketball (playing and coaching),
             and spending time with people I care about.
             <br /><br />
-            I&apos;m currently improving my health habits, learning to network, completing certifications, and growing as a developer through{" "}
-            <a href="/projects" className="hover:text-primary">projects</a>,{" "}
-            <a href="/research" className="hover:text-primary">research</a>, and LeetCode.
+            I&apos;m currently improving my health habits, learning to network, completing certifications, and growing as a product engineer through{" "}
+            <a href="/projects" className="hover:text-primary">projects</a>, a daily{" "}
+            <a href="/learning" className="hover:text-primary">learning</a> habit, and LeetCode.
             <br /><br />
-            In the future, I’d love to become a solutions architect and eventually become an entrepreneur (check out my <a href="/projects" className="hover:text-primary">projects</a>),
+            In the future, I’d love to lead product as a Head of Product and eventually become an entrepreneur (check out my <a href="/projects" className="hover:text-primary">projects</a>),
             learn another language, and pick up the guitar.
           </p>
         </div>
@@ -71,7 +73,8 @@ export default function SideNav() {
               <li><a href="/about" className="hover:text-primary flex items-center gap-2"><UserIcon /> About</a></li>
               <li><a href="/projects" className="hover:text-primary flex items-center gap-2"><BriefcaseIcon /> Projects</a></li>
               <li><a href="/research" className="hover:text-primary flex items-center gap-2"><BookIcon /> Research</a></li>
-              <li><a href="/trips" className="hover:text-primary flex items-center gap-2"><PlaneIcon /> Trips</a></li>
+              <li><a href="/learning" className="hover:text-primary flex items-center gap-2"><LightbulbIcon size={16} /> Learning</a></li>
+              <li><a href="/trips"className="hover:text-primary flex items-center gap-2"><PlaneIcon /> Trips</a></li>
             </ul>
           </div>
 

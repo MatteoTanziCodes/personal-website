@@ -1,0 +1,14 @@
+{
+  "maxPerFeed": 3,
+  "maxAgeDays": 60,
+  "feeds": [
+    { "name": "Lenny's Newsletter", "url": "https://www.lennysnewsletter.com/feed" },
+    { "name": "SVPG", "url": "https://www.svpg.com/feed/" },
+    { "name": "First Round Review", "url": "https://review.firstround.com/articles/rss/" },
+    { "name": "The Beautiful Mess", "url": "https://cutlefish.substack.com/feed" },
+    { "name": "The Product Compass", "url": "https://www.productcompass.pm/feed" },
+    { "name": "Product Growth", "url": "https://www.news.aakashg.com/feed" },
+    { "name": "Elena's Growth Scoop", "url": "https://www.elenaverna.com/feed" },
+    { "name": "The Looking Glass", "url": "https://lg.substack.com/feed" }
+  ]
+}
