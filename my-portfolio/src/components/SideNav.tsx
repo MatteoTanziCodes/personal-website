@@ -72,7 +72,6 @@ export default function SideNav() {
             <ul className="flex flex-col gap-2 text-[var(--muted)] text-base">
               <li><a href="/about" className="hover:text-primary flex items-center gap-2"><UserIcon /> About</a></li>
               <li><a href="/projects" className="hover:text-primary flex items-center gap-2"><BriefcaseIcon /> Projects</a></li>
-              <li><a href="/research" className="hover:text-primary flex items-center gap-2"><BookIcon /> Research</a></li>
               <li><a href="/learning" className="hover:text-primary flex items-center gap-2"><LightbulbIcon size={16} /> Learning</a></li>
               <li><a href="/trips"className="hover:text-primary flex items-center gap-2"><PlaneIcon /> Trips</a></li>
             </ul>
