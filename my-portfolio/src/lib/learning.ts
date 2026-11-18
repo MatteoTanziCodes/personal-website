@@ -3,8 +3,6 @@ import {
   FRESH_WINDOW_DAYS,
   HN_MIN_POINTS,
   LEARNING_TOPICS,
-  PAPERS_PER_TOPIC,
-  PAPER_WINDOW_DAYS,
   TRENDING_AI_PAPERS,
   type ClassicRead,
   type LearningTopic,
@@ -337,61 +335,17 @@ async function fetchTrendingAiPapers(): Promise<ResearchPaper[]> {
     }));
 }
 
-// OpenAlex source id for arXiv; restricting to it keeps results to CS preprints.
-const OPENALEX_ARXIV_SOURCE = "S4306400194";
-const OPENALEX_COMPUTER_SCIENCE_FIELD = "17";
-
-interface OpenAlexWork {
-  title: string | null;
-  doi: string | null;
-  publication_date: string;
-  authorships: { author: { display_name: string } }[];
-  abstract_inverted_index: Record<string, number[]> | null;
-  primary_topic?: { subfield?: { display_name?: string } };
+// public/papers.json is written at build time by scripts/fetch-papers.mjs (arXiv API),
+// because arXiv blocks browser requests and OpenAlex rate-limits anonymous searches.
+interface PapersFile {
+  generatedAt: string;
+  byTopic: Record<string, ResearchPaper[]>;
 }
 
-/** OpenAlex stores abstracts as word -> positions; rebuild the text. */
-function rebuildAbstract(index: Record<string, number[]> | null): string {
-  if (!index) return "";
-  const words: string[] = [];
-  for (const [word, positions] of Object.entries(index)) {
-    for (const pos of positions) words[pos] = word;
-  }
-  return words.filter(Boolean).join(" ");
-}
-
-async function fetchArxivPapers(query: string): Promise<ResearchPaper[]> {
-  const since = new Date(Date.now() - PAPER_WINDOW_DAYS * 86_400_000).toISOString().slice(0, 10);
-  const params = new URLSearchParams({
-    search: query,
-    filter: [
-      `primary_topic.field.id:${OPENALEX_COMPUTER_SCIENCE_FIELD}`,
-      `primary_location.source.id:${OPENALEX_ARXIV_SOURCE}`,
-      `from_publication_date:${since}`,
-      "has_abstract:true",
-    ].join(","),
-    per_page: String(PAPERS_PER_TOPIC),
-    select: "title,doi,publication_date,authorships,abstract_inverted_index,primary_topic",
-  });
-  const data = await getJson<{ results: OpenAlexWork[] }>(`https://api.openalex.org/works?${params}`);
-
-  return data.results.flatMap((work) => {
-    const arxivId = work.doi?.match(/arxiv\.(.+)$/i)?.[1];
-    if (!work.title || !arxivId) return [];
-    return [
-      {
-        id: `arxiv:${arxivId}`,
-        title: work.title,
-        authors: formatAuthors(work.authorships.map((a) => a.author.display_name)),
-        summary: clip(rebuildAbstract(work.abstract_inverted_index)),
-        url: `https://arxiv.org/abs/${arxivId}`,
-        pdfUrl: `https://arxiv.org/pdf/${arxivId}`,
-        publishedAt: work.publication_date,
-        source: "arXiv" as const,
-        meta: work.primary_topic?.subfield?.display_name,
-      },
-    ];
-  });
+async function fetchBuiltPapers(): Promise<PapersFile["byTopic"]> {
+  // no-cache revalidates against the server, so a fresh deploy shows up immediately.
+  const file = await getJson<PapersFile>("/papers.json", { cache: "no-cache" });
+  return file.byTopic ?? {};
 }
 
 async function toPaperFeed(request: Promise<ResearchPaper[]>): Promise<PaperFeed> {
@@ -407,10 +361,10 @@ async function toPaperFeed(request: Promise<ResearchPaper[]>): Promise<PaperFeed
 export async function fetchDailyLearningFeed(date = todayKey()): Promise<DailyLearningFeed> {
   const paperTopics = LEARNING_TOPICS.filter((topic) => topic.paperQuery);
 
-  const [topicFeeds, trending, topicPapers, wiki] = await Promise.all([
+  const [topicFeeds, trending, builtPapers, wiki] = await Promise.all([
     Promise.all(LEARNING_TOPICS.map(fetchTopic)),
     toPaperFeed(fetchTrendingAiPapers()),
-    Promise.all(paperTopics.map((topic) => toPaperFeed(fetchArxivPapers(topic.paperQuery!)))),
+    fetchBuiltPapers().catch(() => null),
     fetchWikipedia(date).catch(() => null),
   ]);
 
@@ -420,9 +374,11 @@ export async function fetchDailyLearningFeed(date = todayKey()): Promise<DailyLe
   });
 
   const byTopic: Record<string, PaperFeed> = {};
-  paperTopics.forEach((topic, i) => {
-    byTopic[topic.id] = topicPapers[i];
-  });
+  for (const topic of paperTopics) {
+    byTopic[topic.id] = builtPapers
+      ? { papers: builtPapers[topic.id] ?? [], failed: false }
+      : { papers: [], failed: true };
+  }
 
   return { date, topics, papers: { trending, byTopic }, wiki };
 }
