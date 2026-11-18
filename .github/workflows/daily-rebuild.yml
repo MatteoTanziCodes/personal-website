@@ -1,0 +1,34 @@
+# Rebuilds the site every morning so the product newsletter posts on /learning stay fresh.
+# The build's `prebuild` step (my-portfolio/scripts/fetch-newsletters.mjs) pulls the feeds.
+#
+# One-time setup:
+#   1. Cloudflare dashboard -> Workers & Pages -> matteo-tanzi-portfolio -> Settings ->
+#      Builds -> Deploy hooks: add a hook for the `main` branch and copy its URL.
+#   2. GitHub -> repo Settings -> Secrets and variables -> Actions: add it as
+#      CLOUDFLARE_DEPLOY_HOOK_URL.
+# Run it by hand from the Actions tab ("Run workflow") to test.
+
+name: Daily rebuild
+
+on:
+  schedule:
+    # 10:00 UTC = 5am Toronto in winter, 6am in summer.
+    - cron: "0 10 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger Cloudflare Pages deploy hook
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "::error::Add the CLOUDFLARE_DEPLOY_HOOK_URL repository secret (see comments at the top of this file)."
+            exit 1
+          fi
+          curl --fail --silent --show-error --retry 3 -X POST "$DEPLOY_HOOK_URL"

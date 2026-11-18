@@ -21,8 +21,21 @@ export default function ResumePage() {
 
       <div className="mt-8 space-y-6">
         <div className="border-l-4 border-primary pl-4">
+          <h3 className="text-xl font-bold">
+            Senior Product Engineer @{" "}
+            <a href="https://www.endodeals.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary">
+              Endo
+            </a>
+          </h3>
+          <p className="text-sm text-muted">Sep 2026 – Present</p>
+          <ul className="list-disc ml-6 mt-2 space-y-1 text-base">
+            <li>Building the software behind modern sports agencies</li>
+          </ul>
+        </div>
+
+        <div className="border-l-4 border-primary pl-4">
           <h3 className="text-xl font-bold">Backend Developer @ BMO</h3>
-          <p className="text-sm text-muted">Jan 2024 – Present</p>
+          <p className="text-sm text-muted">Jan 2024 – Sep 2026</p>
           <ul className="list-disc ml-6 mt-2 space-y-1 text-base">
             <li>Built MEAN-stack monitoring dashboard integrated with ELK and LDAP</li>
             <li>Replaced on-prem vendor logic with AWS Lambda functions for payment processing</li>

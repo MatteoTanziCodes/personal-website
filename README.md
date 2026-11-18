@@ -1,62 +1,136 @@
-# 🧠 Matteo Tanzi — Personal Portfolio
+# Matteo Tanzi — Personal Site
 
-A developer-focused personal website showcasing my resume, research, and projects. Built with ❤️ using **Next.js**, **Tailwind CSS**, and **Framer Motion**.
+Source for [matteo-tanzi.dev](https://www.matteo-tanzi.dev), the personal site of Matteo Tanzi, Senior Product Engineer at [Endo](https://www.endodeals.com) (previously BMO), working toward becoming a Head of Product.
 
-Live Site: [matteo-tanzi.ca](https://matteo-tanzi.ca)
+The site covers my projects, research, work history, and a travel archive, plus a **daily learning feed** centred on product management and leadership, with fresh articles, new computer-science papers, and something outside tech every day.
 
----
+## Stack
 
-## 🚀 Tech Stack
+| Layer | Tool |
+| --- | --- |
+| Framework | [Next.js 16](https://nextjs.org/) (App Router, static export) |
+| UI | [React 19](https://react.dev/), TypeScript |
+| Styling | [Tailwind CSS v4](https://tailwindcss.com/) with CSS-variable light/dark theme via [`next-themes`](https://github.com/pacocoursey/next-themes) |
+| Animation | [Framer Motion](https://motion.dev/) |
+| Icons | [Iconify](https://iconify.design/), [Lucide](https://lucide.dev/) |
+| Hosting | [Cloudflare Pages](https://pages.cloudflare.com/) (project `matteo-tanzi-portfolio`) |
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Hosting**: [Vercel](https://vercel.com/)
+## Pages
 
----
+| Route | What it shows |
+| --- | --- |
+| `/` | Intro, contact links, today's learning picks, latest projects, latest research, trip years |
+| `/about` | Snap-scrolling sections: about, contact, work timeline, current focus, tools, speaking |
+| `/projects` | Most recently pushed public GitHub repos (live from the GitHub API, cached in `localStorage` for 1 hour, falling back to `src/data/projects.ts`) |
+| `/research` | Research projects from `src/data/research.ts` |
+| `/learning` | Daily learning feed led by a Product Management focus (a daily classic essay, product newsletter posts, community articles, UX papers), plus trending AI papers, new arXiv papers per topic, fresh articles per topic, and Wikipedia's featured article, "on this day" and "did you know", with a per-visitor reading goal and streak |
+| `/trips` | Photo archive grouped by year, with tilt-on-hover (desktop) and tilt-on-motion (mobile) cards |
+| `/resume` | Resume summary and PDF download |
 
-## 🧩 Features
+## Daily learning feed
 
-- ⚡ Fully responsive design
-- 🧱 Reusable components: `ResumeTimeline`, `ProjectCard`, `ResearchCard`
-- 🎞️ Smooth animations with Framer Motion
-- 📄 Downloadable resume
-- ✨ Creative sections for BMO work, research, and personal projects
+The site is a static export with no backend, so `/learning` fetches everything in the visitor's browser from public APIs that allow cross-origin requests:
 
----
+| Source | Used for |
+| --- | --- |
+| [Hacker News Search (Algolia)](https://hn.algolia.com/api) | Recent stories per topic above a points threshold |
+| [DEV.to API](https://developers.forem.com/api) | Top articles per tag, e.g. `product`, `productmanagement`, `leadership` (requests are spaced out to stay under DEV's rate limit) |
+| [Hugging Face Daily Papers](https://huggingface.co/papers) | Trending AI/ML papers, ranked by community upvotes |
+| [OpenAlex](https://docs.openalex.org/) | New arXiv computer-science papers per topic (`paperQuery`) from the last 14 days |
+| [Wikimedia feed API](https://api.wikimedia.org/wiki/Feed_API) | Featured article, "on this day", "did you know" |
 
-## 📬 Contact
+**The live sources above update themselves every day; nothing needs to be rebuilt or redeployed for them.** Each visitor's browser fetches the feed live and caches it in `localStorage` until their local midnight, then fetches a new one. A feed with a failed source isn't cached, so it retries on the next visit, and editing the topic config invalidates any cached feed. If a DEV.to tag has no top posts that week, its newest posts fill the gap. arXiv's own API doesn't allow browser requests, which is why arXiv papers come through OpenAlex. Reading progress (reads, daily goal, streak) is stored per browser and never leaves the visitor's device. Logic lives in `src/lib/learning.ts`, `src/lib/useLearningFeed.ts`, and `src/lib/useReadingLog.ts`.
 
-Built by **Matteo Tanzi**  
-📧 [matteotanzibusiness@gmail.com](mailto:matteotanzibusiness@gmail.com)  
-🔗 [LinkedIn](https://www.linkedin.com/in/matteospencertanzi/)
+### Product newsletters (refreshed by a daily rebuild)
 
----
+Product newsletters (Lenny's Newsletter, SVPG, First Round Review, The Beautiful Mess, The Product Compass, Product Growth, Elena's Growth Scoop, The Looking Glass) publish RSS feeds that block browser requests, so they're fetched at **build time** instead:
 
-## 🛠 Development
+1. `scripts/fetch-newsletters.mjs` runs automatically before `npm run dev` and `npm run build` (or on its own with `npm run fetch:newsletters`). It reads the feed list in `src/data/newsletters.json`, keeps the newest posts from each, and writes `public/newsletters.json` (gitignored). It never fails the build; if every feed is down it keeps the previous file.
+2. `/learning` and the homepage card load `/newsletters.json` from the site itself.
+3. `.github/workflows/daily-rebuild.yml` triggers a Cloudflare Pages rebuild every day at 10:00 UTC, so the posts stay current.
 
-```bash
-# Clone the repo
-git clone https://github.com/yourusername/portfolio.git
-cd portfolio
+**One-time setup for the daily rebuild:**
 
-# Install dependencies
-npm install
+1. In the Cloudflare dashboard, open **Workers & Pages → matteo-tanzi-portfolio → Settings → Builds → Deploy hooks**, and add a hook for the `main` branch. Copy its URL.
+2. In GitHub, open the repo → **Settings → Secrets and variables → Actions**, and add the hook URL as a secret named `CLOUDFLARE_DEPLOY_HOOK_URL`.
+3. Test it from the repo's **Actions** tab: **Daily rebuild → Run workflow**.
 
-# Start the dev server
-npm run dev
+GitHub pauses scheduled workflows after 60 days without repository activity. If posts stop updating, re-enable the workflow from the Actions tab.
 
-```
-## 📝 License
+To add or remove a newsletter, edit `src/data/newsletters.json`. Any RSS or Atom feed works.
 
-This project is licensed under the **MIT License**.  
-Feel free to use, modify, and share it.
+## Project structure
 
 ```text
-MIT License
+personal-website/
+├── .github/workflows/          # daily-rebuild.yml (refreshes newsletter posts)
+└── my-portfolio/               # the Next.js app
+    ├── scripts/                # fetch-newsletters.mjs (runs before dev/build)
+    ├── public/
+    │   ├── assets/             # favicon, OG image
+    │   ├── fonts/              # Satoshi
+    │   ├── images/trips/       # travel photos
+    │   └── Matteo_Tanzi_Resume_2026.pdf
+    └── src/
+        ├── app/                # routes (one folder per page) + globals.css
+        ├── components/         # shared UI; about/ and homepage/ hold page-specific pieces
+        ├── data/               # editable content: projects, research, trips, learning topics, newsletters
+        ├── lib/                # GitHub fetching, site constants, hooks
+        ├── styles/             # theme variables, fonts, scrollbar
+        └── utils/              # icon helpers
+```
 
-Copyright (c) 2025 Matteo Tanzi
+## Editing content
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction...
+Most content lives in plain TypeScript files, so no code changes are needed to update it:
+
+- **Projects fallback:** `src/data/projects.ts` (shown if the GitHub API is unavailable)
+- **Research:** `src/data/research.ts`
+- **Learning topics:** `src/data/learning.ts`. Each topic has a label plus any of: a Hacker News search query, one or more DEV.to tags, an arXiv `paperQuery`, and a hand-picked `classics` list (one rotates in each day, so the topic is never empty). `FOCUS_TOPIC_ID` (currently Product Management) picks the topic featured at the top of `/learning` and first on the homepage card. The same file sets articles and papers per topic, the freshness windows, and the daily reading goal.
+- **Trips:** `src/data/trips.ts`, with photos in `public/images/trips/`. Use `.jpg`/`.jpeg`; `.heic` only renders in Safari.
+- **Resume PDF:** replace the file in `public/` and update `RESUME_PDF_PATH` in `src/lib/site.ts`
+- **Theme colours:** CSS variables in `src/styles/theme.css`, exposed to Tailwind (`text-primary`, `text-muted`, ...) through the `@theme` block in `src/app/globals.css`
+
+## Development
+
+Requires Node.js 20.9 or later (developed on Node 24).
+
+```bash
+git clone https://github.com/MatteoTanziCodes/personal-website.git
+cd personal-website/my-portfolio
+npm install
+npm run dev        # http://localhost:3000
+```
+
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Fetch newsletters, then start the dev server (webpack) |
+| `npm run dev:turbopack` | Dev server (Turbopack) |
+| `npm run build` | Fetch newsletters, then static export to `out/` |
+| `npm run fetch:newsletters` | Refresh `public/newsletters.json` on its own |
+| `npm run start` | Serve a production build |
+| `npm run lint` | ESLint (Next.js core-web-vitals + TypeScript rules) |
+
+## Deployment
+
+`next.config.ts` sets `output: "export"`, so the site builds to static HTML in `my-portfolio/out/`. Cloudflare Pages builds and deploys `main` automatically through its GitHub integration (project `matteo-tanzi-portfolio`), and creates preview deployments for other branches.
+
+Cloudflare Pages build settings:
+
+| Setting | Value |
+| --- | --- |
+| Root directory | `my-portfolio` |
+| Build command | `npm run build` (must be the npm script, not `next build`, so the newsletter fetch runs first) |
+| Build output directory | `out` |
+
+For visitor analytics, turn on Cloudflare Web Analytics for the Pages project (**Metrics → Web Analytics**). It needs no code changes.
+
+## Contact
+
+- Email: [matteotanzibusiness@gmail.com](mailto:matteotanzibusiness@gmail.com)
+- LinkedIn: [matteospencertanzi](https://www.linkedin.com/in/matteospencertanzi/)
+- GitHub: [MatteoTanziCodes](https://github.com/MatteoTanziCodes)
+
+## License
+
+MIT © Matteo Tanzi

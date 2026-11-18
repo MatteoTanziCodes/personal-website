@@ -3,20 +3,19 @@ import type { Metadata } from "next";
 import Navbar from "@components/Navbar";
 import { Providers } from "@components/Providers"; 
 import Footer from "@components/Footer";
-import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://matteo-tanzi.ca"),
-  title: "Matteo Tanzi | Software Developer",
-  description: "Personal site showcasing projects, resume, and research.",
+  metadataBase: new URL("https://www.matteo-tanzi.dev"),
+  title: "Matteo Tanzi | Senior Product Engineer",
+  description: "Senior Product Engineer working toward Head of Product. Projects, resume, and a daily learning feed.",
   icons: {
     icon: "/assets/favicon.ico",
     apple: "/assets/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Matteo Tanzi | Software Developer",
-    description: "Explore my portfolio of full-stack development, AWS projects, and AI research.",
-    url: "https://matteo-tanzi.ca",
+    title: "Matteo Tanzi | Senior Product Engineer",
+    description: "Senior Product Engineer at Endo, working toward Head of Product. Projects, resume, and a daily learning feed.",
+    url: "https://www.matteo-tanzi.dev",
     siteName: "Matteo Tanzi",
     images: [
       {
@@ -31,8 +30,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Matteo Tanzi | Software Developer",
-    description: "Explore my portfolio of full-stack development, AWS projects, and AI research.",
+    title: "Matteo Tanzi | Senior Product Engineer",
+    description: "Senior Product Engineer at Endo, working toward Head of Product. Projects, resume, and a daily learning feed.",
     images: ["/assets/og-image.png"],
   },
 };
@@ -49,7 +48,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </main>
           <Footer />
         </Providers>
-        <Analytics />
       </body>    
     </html>
   );

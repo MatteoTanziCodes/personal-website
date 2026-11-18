@@ -1,6 +1,7 @@
 // src/components/about/Current.tsx
 "use client";
 
+import Link from "next/link";
 import AnimatedWrapper from "@/components/AnimatedWrapper";
 
 export default function Current() {
@@ -12,7 +13,18 @@ export default function Current() {
       <AnimatedWrapper>
         <div className="w-full max-w-3xl space-y-8">
           <h2 className="text-4xl font-bold text-[var(--fg)] mb-4">What I&apos;m Currently Doing</h2>
-          <div className="w-full max-w-2xl grid grid-cols-1 md:grid-cols-3 gap-8 text-left text-sm text-[var(--muted)]">
+          <div className="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-8 text-left text-sm text-[var(--muted)]">
+            <div>
+              <h3 className="text-xl font-semibold text-[var(--fg)] mb-2">Work</h3>
+              <p>
+                Senior Product Engineer at{" "}
+                <a href="https://www.endodeals.com" target="_blank" rel="noopener noreferrer" className="text-[var(--fg)] hover:text-primary">
+                  Endo
+                </a>{" "}
+                (since September 2026), building the software behind modern sports agencies.
+              </p>
+            </div>
+
             <div>
               <h3 className="text-xl font-semibold text-[var(--fg)] mb-2">Personally</h3>
               <p>
@@ -22,17 +34,22 @@ export default function Current() {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold text-[var(--fg)] mb-2">Research</h3>
+              <h3 className="text-xl font-semibold text-[var(--fg)] mb-2">Product</h3>
               <p>
-                Planning to pursue a Master’s with a focus on AI and Computer Vision—
-                exploring how machine learning can make real‑world systems smarter.
+                Growing from engineer into product leader: learning discovery, strategy, and
+                prioritization on the way to becoming a Head of Product.
               </p>
             </div>
 
             <div>
               <h3 className="text-xl font-semibold text-[var(--fg)] mb-2">Projects</h3>
               <p>
-                Currently building Ambassador Boost, an entrepreneurial platform empowering creators to launch and scale ideas.
+                Nothing in active development right now, but I have a few ideas I may start
+                building soon. In the meantime, check out my{" "}
+                <Link href="/projects" className="text-[var(--fg)] hover:text-primary underline">
+                  past projects
+                </Link>
+                .
               </p>
             </div>
           </div>
