@@ -23,7 +23,7 @@ The site covers my projects, research, work history, and a travel archive, plus 
 | `/about` | Snap-scrolling sections: about, contact, work timeline, current focus, tools, speaking |
 | `/projects` | Most recently pushed public GitHub repos (live from the GitHub API, cached in `localStorage` for 1 hour, falling back to `src/data/projects.ts`) |
 | `/research` | Past research projects from `src/data/research.ts` (not linked in the nav) |
-| `/learning` | Daily learning feed led by a Product Management focus (a daily classic essay, product newsletter posts, community articles, UX papers), plus a "Today's knowledge" panel with filter chips that switches between general knowledge (Wikipedia's featured article, "on this day", "did you know", and a daily vocabulary quiz with intermediate and hard words) and research papers (trending AI papers, new arXiv papers per topic), fresh articles per topic, with a per-visitor reading goal and streak |
+| `/learning` | Daily learning feed led by a Product Management focus (a daily classic essay, product newsletter posts, community articles, UX papers), plus one "Today's knowledge" panel with a toggle between general knowledge (Wikipedia's featured article, "on this day", "did you know", and a daily vocabulary quiz with intermediate and hard words), research papers (trending AI papers, new arXiv papers per topic) and fresh articles for the other topics, with topic filters for papers and articles, with a per-visitor reading goal and streak |
 | `/trips` | Photo archive grouped by year, with tilt-on-hover (desktop) and tilt-on-motion (mobile) cards |
 | `/resume` | Resume summary and PDF download |
 
