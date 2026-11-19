@@ -23,7 +23,7 @@ The site covers my projects, research, work history, and a travel archive, plus 
 | `/about` | Snap-scrolling sections: about, contact, work timeline, current focus, tools, speaking |
 | `/projects` | Most recently pushed public GitHub repos (live from the GitHub API, cached in `localStorage` for 1 hour, falling back to `src/data/projects.ts`) |
 | `/research` | Past research projects from `src/data/research.ts` (not linked in the nav) |
-| `/learning` | Daily learning feed led by a Product Management focus (a daily classic essay, product newsletter posts, community articles, UX papers), plus trending AI papers, new arXiv papers per topic, fresh articles per topic, and Wikipedia's featured article, "on this day" and "did you know", with a per-visitor reading goal and streak |
+| `/learning` | Daily learning feed led by a Product Management focus (a daily classic essay, product newsletter posts, community articles, UX papers), plus a "Today's knowledge" panel with filter chips that switches between general knowledge (Wikipedia's featured article, "on this day", "did you know", and a daily vocabulary quiz with intermediate and hard words) and research papers (trending AI papers, new arXiv papers per topic), fresh articles per topic, with a per-visitor reading goal and streak |
 | `/trips` | Photo archive grouped by year, with tilt-on-hover (desktop) and tilt-on-motion (mobile) cards |
 | `/resume` | Resume summary and PDF download |
 
@@ -93,6 +93,7 @@ Most content lives in plain TypeScript files, so no code changes are needed to u
 - **Projects fallback:** `src/data/projects.ts` (shown if the GitHub API is unavailable)
 - **Research:** `src/data/research.ts`
 - **Learning topics:** `src/data/learning.ts`. Each topic has a label plus any of: a Hacker News search query, one or more DEV.to tags, an arXiv `paperQuery`, and a hand-picked `classics` list (one rotates in each day, so the topic is never empty). `FOCUS_TOPIC_ID` (currently Product Management) picks the topic featured at the top of `/learning` and first on the homepage card. The same file sets articles and papers per topic, the freshness windows, and the daily reading goal.
+- **Vocabulary words:** `src/data/vocabulary.ts`. Two lists (intermediate and hard) with a part of speech, definition and example sentence per word. Each day shows `WORDS_PER_LEVEL` words from each list in order, so adding words lengthens the cycle before repeats. Quiz answers are kept per browser in `localStorage`.
 - **Trips:** `src/data/trips.ts`, with photos in `public/images/trips/`. Use `.jpg`/`.jpeg`; `.heic` only renders in Safari.
 - **Resume PDF:** replace the file in `public/` and update `RESUME_PDF_PATH` in `src/lib/site.ts`
 - **Theme colours:** CSS variables in `src/styles/theme.css`, exposed to Tailwind (`text-primary`, `text-muted`, ...) through the `@theme` block in `src/app/globals.css`

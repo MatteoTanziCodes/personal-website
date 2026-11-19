@@ -10,6 +10,7 @@ import DailyProgress from "@/components/learning/DailyProgress";
 import WikiSpotlight from "@/components/learning/WikiSpotlight";
 import PaperCard from "@/components/learning/PaperCard";
 import ClassicCard from "@/components/learning/ClassicCard";
+import VocabTrainer from "@/components/learning/VocabTrainer";
 import {
   FOCUS_TOPIC_ID,
   LEARNING_TOPICS,
@@ -19,7 +20,13 @@ import {
   PAPER_WINDOW_DAYS,
   TRENDING_AI_PAPERS,
 } from "@/data/learning";
-import { classicForDay, todayKey, type PaperFeed, type TopicFeed } from "@/lib/learning";
+import {
+  classicForDay,
+  todayKey,
+  type DailyLearningFeed,
+  type PaperFeed,
+  type TopicFeed,
+} from "@/lib/learning";
 import { useLearningFeed } from "@/lib/useLearningFeed";
 import { useReadingLog } from "@/lib/useReadingLog";
 import { useNewsletters } from "@/lib/useNewsletters";
@@ -112,6 +119,137 @@ function PaperGroup({ title, subtitle, loading, feed, skeletons, isRead, setRead
         </p>
       )}
     </div>
+  );
+}
+
+/** "general", "trending", "papers", or a paper topic id. */
+type KnowledgeView = string;
+
+const KNOWLEDGE_VIEW_KEY = "learning-knowledge-view-v1";
+const KNOWLEDGE_VIEWS: { id: KnowledgeView; label: string; group: "knowledge" | "papers" }[] = [
+  { id: "general", label: "General knowledge", group: "knowledge" },
+  { id: "trending", label: "Trending in AI", group: "papers" },
+  ...PAPER_TOPICS.map((topic) => ({ id: topic.id, label: topic.label, group: "papers" as const })),
+  { id: "papers", label: "All papers", group: "papers" },
+];
+
+function loadKnowledgeView(): KnowledgeView {
+  try {
+    const saved = window.localStorage.getItem(KNOWLEDGE_VIEW_KEY);
+    if (saved && KNOWLEDGE_VIEWS.some((view) => view.id === saved)) return saved;
+  } catch {
+    // Storage unavailable; fall back to the default view.
+  }
+  return "general";
+}
+
+interface KnowledgeSectionProps {
+  date: string;
+  loading: boolean;
+  feed?: DailyLearningFeed | null;
+  isRead: (id: string) => boolean;
+  setRead: (id: string, read: boolean) => void;
+}
+
+/** Wikipedia, the vocabulary trainer, and research papers share one panel, switched by filter chips. */
+function KnowledgeSection({ date, loading, feed, isRead, setRead }: KnowledgeSectionProps) {
+  const [view, setView] = useState<KnowledgeView>(() =>
+    typeof window === "undefined" ? "general" : loadKnowledgeView()
+  );
+
+  const choose = (next: KnowledgeView) => {
+    setView(next);
+    try {
+      window.localStorage.setItem(KNOWLEDGE_VIEW_KEY, next);
+    } catch {
+      // Remembering the view is a convenience only.
+    }
+  };
+
+  const trending = (
+    <PaperGroup
+      title="Trending in AI"
+      subtitle="Hugging Face Daily Papers · what the AI community is upvoting today"
+      loading={loading}
+      feed={feed?.papers.trending}
+      skeletons={TRENDING_AI_PAPERS}
+      isRead={isRead}
+      setRead={setRead}
+    />
+  );
+  const topicPapers = (topic: LearningTopic) => (
+    <PaperGroup
+      key={topic.id}
+      title={topic.label}
+      subtitle={`arXiv · "${topic.paperQuery}" · last ${PAPER_WINDOW_DAYS} days`}
+      loading={loading}
+      feed={feed?.papers.byTopic[topic.id]}
+      skeletons={PAPERS_PER_TOPIC}
+      isRead={isRead}
+      setRead={setRead}
+    />
+  );
+  const paperTopic = PAPER_TOPICS.find((topic) => topic.id === view);
+
+  return (
+    <section aria-labelledby="knowledge-heading">
+      <h2 id="knowledge-heading" className="text-2xl font-semibold text-[var(--fg)]">
+        Today&apos;s knowledge
+      </h2>
+      <p className="mb-4 text-sm text-[var(--muted)]">
+        General knowledge, a daily vocabulary drill, and new research papers. Pick what to see.
+      </p>
+
+      <div className="mb-6 flex flex-wrap items-center gap-2" role="group" aria-label="Choose what to show">
+        {KNOWLEDGE_VIEWS.map((option, i) => {
+          const selected = view === option.id;
+          const startsGroup = i > 0 && KNOWLEDGE_VIEWS[i - 1].group !== option.group;
+          return (
+            <span key={option.id} className="flex items-center gap-2">
+              {startsGroup && (
+                <span className="mx-1 text-xs uppercase tracking-wide text-[var(--muted)]">Papers</span>
+              )}
+              <button
+                type="button"
+                aria-pressed={selected}
+                onClick={() => choose(option.id)}
+                className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+                  selected
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-[var(--border)] text-[var(--muted)] hover:border-primary hover:text-primary"
+                }`}
+              >
+                {option.label}
+              </button>
+            </span>
+          );
+        })}
+      </div>
+
+      {view === "general" && (
+        <div className="space-y-4">
+          {loading ? (
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="h-44 animate-pulse rounded-lg border border-[var(--border)] bg-[var(--card)] md:col-span-2" />
+              <ArticleCardSkeleton />
+            </div>
+          ) : feed?.wiki ? (
+            <WikiSpotlight wiki={feed.wiki} date={date} onOpen={(id) => setRead(id, true)} />
+          ) : (
+            <p className="text-sm text-[var(--muted)]">Wikipedia&apos;s daily feed is unavailable right now.</p>
+          )}
+          <VocabTrainer date={date} />
+        </div>
+      )}
+      {view === "trending" && trending}
+      {paperTopic && topicPapers(paperTopic)}
+      {view === "papers" && (
+        <div className="space-y-8">
+          {trending}
+          {PAPER_TOPICS.map(topicPapers)}
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -228,55 +366,13 @@ export default function LearningPage() {
             </section>
           )}
 
-          <section aria-labelledby="general-heading">
-            <h2 id="general-heading" className="mb-4 text-2xl font-semibold text-[var(--fg)]">
-              Today&apos;s general knowledge
-            </h2>
-            {loading ? (
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="h-44 animate-pulse rounded-lg border border-[var(--border)] bg-[var(--card)] md:col-span-2" />
-                <ArticleCardSkeleton />
-              </div>
-            ) : feed?.wiki ? (
-              <WikiSpotlight wiki={feed.wiki} date={date} onOpen={(id) => setRead(id, true)} />
-            ) : (
-              <p className="text-sm text-[var(--muted)]">Wikipedia&apos;s daily feed is unavailable right now.</p>
-            )}
-          </section>
-
-          <section aria-labelledby="papers-heading">
-            <h2 id="papers-heading" className="text-2xl font-semibold text-[var(--fg)]">
-              Research papers
-            </h2>
-            <p className="mb-6 text-sm text-[var(--muted)]">
-              What the AI community is upvoting today, plus new computer-science papers on arXiv
-              from the last {PAPER_WINDOW_DAYS} days.
-            </p>
-
-            <div className="space-y-8">
-              <PaperGroup
-                title="Trending in AI"
-                subtitle="Hugging Face Daily Papers"
-                loading={loading}
-                feed={feed?.papers.trending}
-                skeletons={TRENDING_AI_PAPERS}
-                isRead={isRead}
-                setRead={setRead}
-              />
-              {PAPER_TOPICS.map((topic) => (
-                <PaperGroup
-                  key={topic.id}
-                  title={topic.label}
-                  subtitle={`arXiv · "${topic.paperQuery}"`}
-                  loading={loading}
-                  feed={feed?.papers.byTopic[topic.id]}
-                  skeletons={PAPERS_PER_TOPIC}
-                  isRead={isRead}
-                  setRead={setRead}
-                />
-              ))}
-            </div>
-          </section>
+          <KnowledgeSection
+            date={date}
+            loading={loading}
+            feed={feed}
+            isRead={isRead}
+            setRead={setRead}
+          />
 
           <section aria-labelledby="topics-heading">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
