@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Star } from "lucide-react";
 import ThemeClientReady from "@/components/ThemeClientReady";
 import PageWrapper from "@/components/PageWrapper";
 import BackToTopButton from "@/components/BackToTopButton";
@@ -121,13 +122,23 @@ function PaperGroup({ title, subtitle, loading, feed, skeletons, isRead, setRead
   );
 }
 
-type ContentType = "knowledge" | "papers" | "articles";
+type ContentType = "focus" | "knowledge" | "papers" | "articles";
 
 const ALL_TOPICS = "all";
 const TRENDING = "trending";
-const VIEW_STORAGE_KEY = "learning-explore-view-v1";
+// v2: the focus topic became the default view, so earlier saved views are ignored.
+const VIEW_STORAGE_KEY = "learning-explore-view-v2";
 
 const CONTENT_TYPES: { id: ContentType; label: string; blurb: string }[] = [
+  ...(FOCUS_TOPIC
+    ? [
+        {
+          id: "focus" as const,
+          label: FOCUS_TOPIC.label,
+          blurb: `Today's focus: ${FOCUS_TOPIC.description}`,
+        },
+      ]
+    : []),
   {
     id: "knowledge",
     label: "General knowledge",
@@ -147,6 +158,7 @@ const CONTENT_TYPES: { id: ContentType; label: string; blurb: string }[] = [
 
 /** Topic filters for each content type; general knowledge has none. */
 const TOPIC_FILTERS: Record<ContentType, { id: string; label: string }[]> = {
+  focus: [],
   knowledge: [],
   papers: [
     { id: ALL_TOPICS, label: "All" },
@@ -162,8 +174,8 @@ interface ExploreView {
 }
 
 const DEFAULT_VIEW: ExploreView = {
-  type: "knowledge",
-  topic: { knowledge: ALL_TOPICS, papers: TRENDING, articles: ALL_TOPICS },
+  type: FOCUS_TOPIC ? "focus" : "knowledge",
+  topic: { focus: ALL_TOPICS, knowledge: ALL_TOPICS, papers: TRENDING, articles: ALL_TOPICS },
 };
 
 function loadView(): ExploreView {
@@ -212,13 +224,15 @@ interface ExploreSectionProps {
   feed?: DailyLearningFeed | null;
   isRead: (id: string) => boolean;
   setRead: (id: string, read: boolean) => void;
+  /** Content for the focus topic's view, which is highlighted and shown by default. */
+  focus: React.ReactNode;
 }
 
 /**
- * General knowledge, research papers, and the other topics' articles share one panel:
- * a content-type toggle on top, then topic filters for papers and articles.
+ * The focus topic, general knowledge, research papers, and the other topics' articles share one
+ * panel: a content-type toggle on top, then topic filters for papers and articles.
  */
-function ExploreSection({ date, loading, feed, isRead, setRead }: ExploreSectionProps) {
+function ExploreSection({ date, loading, feed, isRead, setRead, focus }: ExploreSectionProps) {
   const [view, setView] = useState<ExploreView>(() =>
     typeof window === "undefined" ? DEFAULT_VIEW : loadView()
   );
@@ -278,7 +292,11 @@ function ExploreSection({ date, loading, feed, isRead, setRead }: ExploreSection
   );
 
   let content: React.ReactNode;
-  if (view.type === "knowledge") {
+  if (view.type === "focus") {
+    content = (
+      <div className="space-y-6 rounded-xl border border-primary/40 bg-primary/5 p-4 sm:p-6">{focus}</div>
+    );
+  } else if (view.type === "knowledge") {
     content = (
       <div className="space-y-4">
         {loading ? (
@@ -322,16 +340,25 @@ function ExploreSection({ date, loading, feed, isRead, setRead }: ExploreSection
         >
           {CONTENT_TYPES.map((t) => {
             const selected = t.id === view.type;
+            const isFocus = t.id === "focus";
+            let tone = selected
+              ? "border-transparent bg-primary/15 text-primary"
+              : "border-transparent text-[var(--muted)] hover:text-primary";
+            if (isFocus) {
+              tone = selected
+                ? "border-primary bg-primary text-white"
+                : "border-primary/40 text-primary hover:bg-primary/10";
+            }
             return (
               <button
                 key={t.id}
                 type="button"
                 aria-pressed={selected}
                 onClick={() => chooseType(t.id)}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                  selected ? "bg-primary/15 text-primary" : "text-[var(--muted)] hover:text-primary"
-                }`}
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${tone}`}
               >
+                {isFocus && <Star size={14} aria-hidden fill="currentColor" />}
+                {isFocus && <span className="sr-only">Today&apos;s focus: </span>}
                 {t.label}
               </button>
             );
@@ -368,6 +395,69 @@ export default function LearningPage() {
 
   const focusClassic = FOCUS_TOPIC && classicForDay(FOCUS_TOPIC, date);
 
+  const focusContent = FOCUS_TOPIC && (
+    <>
+      {focusClassic && (
+        <ClassicCard
+          classic={focusClassic}
+          read={isRead(`classic:${focusClassic.url}`)}
+          onReadChange={(read) => setRead(`classic:${focusClassic.url}`, read)}
+        />
+      )}
+
+      {(newslettersLoading || newsletters.length > 0) && (
+        <div>
+          <h3 className="text-lg font-semibold text-[var(--fg)]">From product newsletters</h3>
+          <p className="mb-3 text-xs text-[var(--muted)]">
+            Latest from Lenny&apos;s Newsletter, SVPG, First Round Review, and more
+          </p>
+          {newslettersLoading ? (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {Array.from({ length: 4 }, (_, i) => (
+                <ArticleCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {newsletters.map((post) => (
+                <ArticleCard
+                  key={post.id}
+                  article={post}
+                  read={isRead(post.id)}
+                  onReadChange={(read) => setRead(post.id, read)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div>
+        <h3 className="mb-3 text-lg font-semibold text-[var(--fg)]">From the community</h3>
+        <TopicArticles
+          topic={FOCUS_TOPIC}
+          loading={loading}
+          feed={feed?.topics[FOCUS_TOPIC.id]}
+          hasClassic={Boolean(focusClassic)}
+          isRead={isRead}
+          setRead={setRead}
+        />
+      </div>
+
+      {FOCUS_TOPIC.paperQuery && (
+        <PaperGroup
+          title="Research"
+          subtitle={`New arXiv papers · "${FOCUS_TOPIC.paperQuery}"`}
+          loading={loading}
+          feed={feed?.papers.byTopic[FOCUS_TOPIC.id]}
+          skeletons={PAPERS_PER_TOPIC}
+          isRead={isRead}
+          setRead={setRead}
+        />
+      )}
+    </>
+  );
+
   return (
     <ThemeClientReady>
       <PageWrapper>
@@ -390,81 +480,8 @@ export default function LearningPage() {
         <div className="space-y-10">
           <DailyProgress readToday={readTodayCount} streak={streak} activeDays={activeDays} />
 
-          {FOCUS_TOPIC && (
-            <section
-              aria-labelledby="focus-heading"
-              className="space-y-6 rounded-xl border border-primary/40 bg-primary/5 p-4 sm:p-6"
-            >
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-primary">Today&apos;s focus</p>
-                <h2 id="focus-heading" className="text-2xl font-semibold text-[var(--fg)]">
-                  {FOCUS_TOPIC.label}
-                </h2>
-                <p className="text-sm text-[var(--muted)]">{FOCUS_TOPIC.description}</p>
-              </div>
-
-              {focusClassic && (
-                <ClassicCard
-                  classic={focusClassic}
-                  read={isRead(`classic:${focusClassic.url}`)}
-                  onReadChange={(read) => setRead(`classic:${focusClassic.url}`, read)}
-                />
-              )}
-
-              {(newslettersLoading || newsletters.length > 0) && (
-                <div>
-                  <h3 className="text-lg font-semibold text-[var(--fg)]">From product newsletters</h3>
-                  <p className="mb-3 text-xs text-[var(--muted)]">
-                    Latest from Lenny&apos;s Newsletter, SVPG, First Round Review, and more
-                  </p>
-                  {newslettersLoading ? (
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {Array.from({ length: 4 }, (_, i) => (
-                        <ArticleCardSkeleton key={i} />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {newsletters.map((post) => (
-                        <ArticleCard
-                          key={post.id}
-                          article={post}
-                          read={isRead(post.id)}
-                          onReadChange={(read) => setRead(post.id, read)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div>
-                <h3 className="mb-3 text-lg font-semibold text-[var(--fg)]">From the community</h3>
-                <TopicArticles
-                  topic={FOCUS_TOPIC}
-                  loading={loading}
-                  feed={feed?.topics[FOCUS_TOPIC.id]}
-                  hasClassic={Boolean(focusClassic)}
-                  isRead={isRead}
-                  setRead={setRead}
-                />
-              </div>
-
-              {FOCUS_TOPIC.paperQuery && (
-                <PaperGroup
-                  title="Research"
-                  subtitle={`New arXiv papers · "${FOCUS_TOPIC.paperQuery}"`}
-                  loading={loading}
-                  feed={feed?.papers.byTopic[FOCUS_TOPIC.id]}
-                  skeletons={PAPERS_PER_TOPIC}
-                  isRead={isRead}
-                  setRead={setRead}
-                />
-              )}
-            </section>
-          )}
-
           <ExploreSection
+            focus={focusContent}
             date={date}
             loading={loading}
             feed={feed}
